@@ -50,6 +50,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .trust svg{width:20px;height:20px;stroke:var(--text)}
 
 .filters{position:sticky;top:0;z-index:10;padding:calc(10px + var(--safe-t)) 0 10px;background:rgba(11,11,15,.78);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.search{display:flex;align-items:center;gap:8px;height:46px;margin:0 16px 10px;padding:0 6px 0 14px;border-radius:14px;background:var(--surface);border:1px solid var(--line2);transition:border-color .2s}
+.search:focus-within{border-color:var(--text)}
+.search svg{flex:0 0 18px;width:18px;height:18px;stroke:var(--muted)}
+.search input{flex:1;min-width:0;height:100%;background:none;border:0;outline:0;color:var(--text);font:inherit;font-size:16px}
+.search input::placeholder{color:var(--muted)}
+.search input::-webkit-search-cancel-button{display:none}
+.search .qx{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted);font-size:20px;line-height:1}
+.empty button{margin-top:12px;height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--line2);background:var(--surface);font-size:14px;color:var(--text)}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:0 16px;scroll-snap-type:x proximity}
 .chip{flex:0 0 auto;height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line2);background:var(--surface);font-size:14px;font-weight:500;color:var(--muted);scroll-snap-align:start;transition:all .2s}
 .chip.on{background:var(--text);color:#0B0B0F;border-color:var(--text)}
@@ -58,6 +66,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:8px 16px 24px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:10px 10px 14px;text-align:left;display:flex;flex-direction:column;opacity:0;transform:translateY(12px);animation:in .5s ease forwards}
 @keyframes in{to{opacity:1;transform:none}}
+.grid.quiet .card{animation:none;opacity:1;transform:none}
 .thumb{aspect-ratio:1/1.12;position:relative;display:flex;align-items:center;justify-content:center;border-radius:16px;background:#101016;overflow:hidden;margin-bottom:10px}
 .thumb svg{height:90%;width:auto;position:relative;filter:drop-shadow(0 14px 18px rgba(0,0,0,.5))}
 .thumb .flag{position:absolute;top:8px;left:8px;font-size:11px;font-weight:600;padding:4px 8px;border-radius:999px;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
@@ -205,6 +214,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     </header>
 
     <nav class="filters">
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Buscar modelo, cor ou GB" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Buscar aparelho">
+        <button type="button" class="qx hide" id="qx" aria-label="Limpar busca">×</button>
+      </label>
       <div class="chips noscroll" id="chips"></div>
     </nav>
 
@@ -452,7 +466,17 @@ function phoneSVG(prod,c,view){
 }
 
 /* ================= VITRINE ================= */
-const F = { marca:'Todas', cond:null };
+const F = { marca:'Todas', cond:null, q:'' };
+
+/* busca: ignora acento e maiúscula; todas as palavras precisam bater */
+const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function textoBusca(p){
+  const partes = [p.marca, p.modelo, ...p.cores.map(c=>c.nome)];
+  p.variantes.forEach(v=>partes.push(v.gb+'gb', v.gb+' gb', v.condicao));
+  return norm(partes.join(' '));
+}
+const bate = p => !F.q || norm(F.q).split(/\s+/).filter(Boolean).every(t=>textoBusca(p).includes(t));
 function renderChips(){
   const marcas = ['Todas', ...new Set(LOJA.produtos.map(p=>p.marca))];
   const conds = [['novo','Novos'],['seminovo','Seminovos']];
@@ -466,8 +490,12 @@ function renderChips(){
 function renderGrid(){
   const list = LOJA.produtos.filter(p =>
     (F.marca==='Todas' || p.marca===F.marca) &&
-    (!F.cond || p.variantes.some(v=>v.condicao===F.cond)));
-  if(!list.length){ $('grid').innerHTML = `<div class="empty">Nenhum aparelho com esse filtro.</div>`; return; }
+    (!F.cond || p.variantes.some(v=>v.condicao===F.cond)) && bate(p));
+  if(!list.length){
+    $('grid').innerHTML = `<div class="empty">${F.q ? `Nenhum aparelho encontrado para “${esc(F.q)}”.` : 'Nenhum aparelho com esse filtro.'}<br><button class="press" id="limpar">Limpar busca e filtros</button></div>`;
+    $('limpar').onclick = ()=>{ F.marca='Todas'; F.cond=null; setQ(''); renderChips(); };
+    return;
+  }
   $('grid').innerHTML = list.map((p,i)=>{
     const vs = p.variantes.filter(v=>!F.cond || v.condicao===F.cond);
     const min = Math.min(...vs.map(v=>v.preco_pix));
@@ -490,6 +518,16 @@ function renderGrid(){
   }).join('');
   $('grid').querySelectorAll('.card').forEach(b=>b.onclick=()=>{ buzz(); enableTilt(); fromCat=true; location.hash='p-'+b.dataset.id; });
 }
+
+function setQ(v){
+  F.q = v; $('q').value = v;
+  $('qx').classList.toggle('hide', !v);
+  $('grid').classList.add('quiet');
+  renderGrid();
+}
+$('q').addEventListener('input', e=>setQ(e.target.value));
+$('q').addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
+$('qx').onclick = e=>{ e.preventDefault(); buzz(); setQ(''); $('q').focus(); };
 
 /* ================= CONFIGURADOR ================= */
 let prod=null, S=null, combos=[], fromCat=false, catScroll=0, shownPix=0;
