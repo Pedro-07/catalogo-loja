@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0B0F">
+<title>Catálogo Interativo · Loja de Celulares</title>
+<meta name="description" content="Escolha cor, armazenamento e condição, simule o parcelamento com entrada e fale direto no WhatsApp da loja.">
+<!-- Pré-visualização do link no WhatsApp/Instagram.
+     Depois do deploy, troque SEU-DOMINIO pelo endereço real (ex.: catalogo-loja.vercel.app) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Prime Cell · Catálogo de celulares">
+<meta property="og:description" content="Escolha o seu, do seu jeito, com o preço na hora. Novos e seminovos com garantia.">
+<meta property="og:image" content="https://SEU-DOMINIO/img/iphone15-azul-1.webp">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0B0F; --surface:#16161D; --surface2:#1F1F29;
+  --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.16);
+  --text:#F5F5F7; --muted:#A1A1AA; --accent:#8B5CF6; --wa:#25D366;
+  --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+body{min-height:100dvh;overflow-x:hidden;font-size:15px;line-height:1.45}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.app{max-width:480px;margin:0 auto;min-height:100dvh;position:relative}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform .12s ease}
+.press:active{transform:scale(.97)}
+.hide{display:none!important}
+.noscroll::-webkit-scrollbar{display:none}
+.noscroll{scrollbar-width:none}
+
+/* ---------- VITRINE ---------- */
+.top{padding:calc(18px + var(--safe-t)) 20px 8px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;border-radius:14px;background:var(--accent);display:grid;place-items:center;font-weight:700;font-size:16px;letter-spacing:-.02em;box-shadow:0 8px 24px -8px var(--accent)}
+.brand h1{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.brand p{font-size:13px;color:var(--muted)}
+.hero{padding:26px 0 18px}
+.hero h2{font-size:32px;line-height:1.08;font-weight:700;letter-spacing:-.03em}
+.hero h2 span{color:var(--muted);font-weight:600}
+.trust{display:flex;gap:8px;padding-bottom:6px}
+.trust div{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px;color:var(--muted);text-align:center}
+.trust svg{width:20px;height:20px;stroke:var(--text)}
+
+.filters{position:sticky;top:0;z-index:10;padding:calc(10px + var(--safe-t)) 0 10px;background:rgba(11,11,15,.78);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 16px;scroll-snap-type:x proximity}
+.chip{flex:0 0 auto;height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line2);background:var(--surface);font-size:14px;font-weight:500;color:var(--muted);scroll-snap-align:start;transition:all .2s}
+.chip.on{background:var(--text);color:#0B0B0F;border-color:var(--text)}
+.sep{flex:0 0 1px;background:var(--line2);margin:8px 2px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:8px 16px 24px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:10px 10px 14px;text-align:left;display:flex;flex-direction:column;opacity:0;transform:translateY(12px);animation:in .5s ease forwards}
+@keyframes in{to{opacity:1;transform:none}}
+.thumb{aspect-ratio:1/1.12;position:relative;display:flex;align-items:center;justify-content:center;border-radius:16px;background:#101016;overflow:hidden;margin-bottom:10px}
+.thumb svg{height:90%;width:auto;position:relative;filter:drop-shadow(0 14px 18px rgba(0,0,0,.5))}
+.thumb .flag{position:absolute;top:8px;left:8px;font-size:11px;font-weight:600;padding:4px 8px;border-radius:999px;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.thumb .flag.hot{color:#FDBA74}
+.dotsrow{display:flex;gap:4px;margin:0 2px 8px}
+.dotsrow i{width:10px;height:10px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.card h3{font-size:15px;font-weight:600;letter-spacing:-.01em;margin:0 2px}
+.card .cond{font-size:12px;color:var(--muted);margin:2px 2px 8px}
+.card .from{font-size:11px;color:var(--muted);margin:0 2px}
+.card .price{font-size:17px;font-weight:700;margin:0 2px;letter-spacing:-.01em}
+.card .inst{font-size:12px;color:var(--muted);margin:1px 2px 0}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
+
+.foot{padding:8px 20px calc(32px + var(--safe-b));color:var(--muted);font-size:13px;text-align:center}
+.foot .addr{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;text-align:left;display:flex;gap:12px;align-items:center}
+.foot .addr svg{flex:0 0 22px;stroke:var(--text)}
+.foot .addr b{color:var(--text);font-weight:600;display:block}
+.foot small{opacity:.6;font-size:12px}
+
+/* ---------- CONFIGURADOR ---------- */
+.prod{min-height:100dvh}
+.stage{position:relative;height:min(62dvh,580px);min-height:380px;overflow:hidden}
+.ptop{position:absolute;z-index:5;top:calc(12px + var(--safe-t));left:14px;right:14px;display:flex;align-items:center;justify-content:space-between}
+.round{width:44px;height:44px;border-radius:50%;background:rgba(22,22,29,.7);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);display:grid;place-items:center}
+.round svg{width:20px;height:20px;stroke:var(--text)}
+.ptop .mk{font-size:13px;color:var(--muted);font-weight:500;padding:8px 14px;border-radius:999px;background:rgba(22,22,29,.6);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line)}
+.tilt{position:absolute;inset:0;transition:transform .3s ease-out}
+.gallery{position:relative;z-index:1;width:100%;height:100%;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;transition:opacity .22s ease}
+.gallery.fade{opacity:0}
+.slide{flex:0 0 100%;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;padding:calc(60px + var(--safe-t)) 0 34px}
+.slide svg{height:100%;max-height:520px;width:auto;filter:drop-shadow(0 28px 36px rgba(0,0,0,.6))}
+.slide img{max-height:100%;max-width:94%;height:auto;width:auto;object-fit:contain;filter:drop-shadow(0 28px 36px rgba(0,0,0,.6))}
+.thumb img{height:90%;width:auto;max-width:88%;object-fit:contain;position:relative;filter:drop-shadow(0 14px 18px rgba(0,0,0,.5))}
+.float{animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
+.gdots{position:absolute;z-index:2;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:6px}
+.gdots i{width:6px;height:6px;border-radius:99px;background:rgba(255,255,255,.3);transition:all .25s}
+.gdots i.on{width:18px;background:var(--text)}
+.gcap{position:absolute;z-index:2;bottom:30px;left:0;right:0;text-align:center;font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+
+.sheet{position:relative;z-index:2;padding:6px 20px calc(120px + var(--safe-b))}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.tag{font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line2)}
+.tag.hot{color:#FDBA74;border-color:rgba(253,186,116,.35);background:rgba(253,186,116,.08)}
+.tag.ok{color:#86EFAC;border-color:rgba(134,239,172,.3);background:rgba(134,239,172,.07)}
+.pname{font-size:32px;font-weight:600;letter-spacing:-.03em;line-height:1.1}
+.pspec{color:var(--muted);font-size:14px;margin-top:4px}
+.priceblock{margin:18px 0 6px;padding:16px;border-radius:20px;background:var(--surface);border:1px solid var(--line)}
+.pixlabel{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.pixlabel b{color:#86EFAC;font-weight:600}
+.pix{font-size:30px;font-weight:700;letter-spacing:-.02em;margin-top:2px}
+.instline{font-size:14px;color:var(--muted);margin-top:2px}
+.instline b{color:var(--text);font-weight:600}
+
+.group{margin-top:22px}
+.glabel{font-size:13px;color:var(--muted);margin-bottom:10px;display:flex;justify-content:space-between}
+.glabel b{color:var(--text);font-weight:500}
+.swatches{display:flex;flex-wrap:wrap;gap:6px}
+.sw{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;border:2px solid transparent;transition:border-color .2s}
+.sw span{width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),inset 0 -6px 10px rgba(0,0,0,.18)}
+.sw.on{border-color:var(--text)}
+.sw{position:relative}
+.sw.off span{opacity:.5}
+.sw.off::after{content:'';position:absolute;width:30px;height:2px;background:rgba(255,255,255,.55);transform:rotate(-45deg);border-radius:2px}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{min-height:48px;padding:8px 18px;border-radius:14px;border:1px solid var(--line2);background:var(--surface);font-weight:500;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;transition:all .2s}
+.pill small{font-size:11px;color:var(--muted);font-weight:400}
+.pill.on{border-color:var(--text);background:var(--surface2)}
+.pill.off{opacity:.38}
+.semi{margin-top:12px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.semi .row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.semi .row b{color:var(--text)}
+.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.08);margin:8px 0 12px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#4ADE80,#86EFAC);transition:width .5s ease}
+
+.parc{display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:2px 20px 4px;scroll-snap-type:x proximity}
+.parc::after,.chips::after{content:'';flex:0 0 12px}
+.pc{flex:0 0 auto;min-width:88px;height:62px;border-radius:14px;border:1px solid var(--line2);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;scroll-snap-align:start;transition:all .2s}
+.pc b{font-size:15px;font-weight:600}
+.pc small{font-size:12px;color:var(--muted)}
+.pc em{font-style:normal;font-size:10px;color:#86EFAC;font-weight:600}
+.pc.on{border-color:var(--text);background:var(--surface2)}
+.pc:disabled{opacity:.35}
+
+/* simulador de entrada */
+.entrada{padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.entrada label{font-size:12px;color:var(--muted);display:block;margin-bottom:8px}
+.ent-in{display:flex;align-items:center;gap:8px;height:52px;padding:0 14px;border-radius:12px;background:var(--bg);border:1px solid var(--line2);transition:border-color .2s}
+.ent-in:focus-within{border-color:var(--text)}
+.ent-in span{color:var(--muted);font-weight:600}
+.ent-in input{flex:1;min-width:0;height:100%;background:none;border:0;outline:0;color:var(--text);font:inherit;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.ent-in input::placeholder{color:var(--muted);opacity:.5}
+.ent-q{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.ent-q button{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line2);background:var(--surface2);font-size:13px;font-weight:500;color:var(--muted);transition:all .2s}
+.ent-q button.on{background:var(--text);color:#0B0B0F;border-color:var(--text)}
+.ent-msg{margin-top:10px;font-size:12px;color:#FDBA74}
+
+.resumo{margin-top:12px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);font-size:13px;color:var(--muted)}
+.resumo .row{display:flex;justify-content:space-between;gap:12px;padding:5px 0}
+.resumo .row b{color:var(--text);font-weight:600;text-align:right}
+.resumo .row.fee b{color:#FDBA74}
+.resumo .row.total{border-top:1px solid var(--line2);margin-top:6px;padding-top:11px;font-size:15px}
+.resumo .save{margin-top:8px;color:#86EFAC}
+
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.spec{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.spec svg{width:22px;height:22px;stroke:var(--text);opacity:.85}
+.spec span{font-size:12px;color:var(--muted)}
+.spec b{font-size:14px;font-weight:600;line-height:1.25}
+.warranty{margin-top:12px;display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);font-size:13px;color:var(--muted)}
+.warranty svg{flex:0 0 22px;stroke:#86EFAC}
+.warranty b{color:var(--text);font-weight:600;display:block;font-size:14px}
+
+.ctabar{position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:18px 16px calc(12px + var(--safe-b));background:linear-gradient(to top,rgba(11,11,15,.98) 55%,rgba(11,11,15,0))}
+.cta{display:flex;align-items:center;justify-content:center;gap:10px;height:58px;border-radius:18px;background:#fff;color:#0B0B0F;font-weight:600;font-size:16px;text-decoration:none;box-shadow:0 10px 30px -10px rgba(255,255,255,.25)}
+.cta .ic{width:30px;height:30px;border-radius:50%;background:var(--wa);display:grid;place-items:center}
+.cta .ic svg{width:17px;height:17px}
+.cta .cp{color:#52525B;font-weight:500;font-size:14px;white-space:nowrap}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .card{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- VITRINE -->
+  <section id="vCat">
+    <header class="top">
+      <div class="brand">
+        <div class="logo" id="logo">PC</div>
+        <div><h1 id="lojaNome"></h1><p id="lojaBairro"></p></div>
+      </div>
+      <div class="hero">
+        <h2>Escolha o seu.<br><span>Do seu jeito, com o preço na hora.</span></h2>
+      </div>
+      <div class="trust">
+        <div><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>Garantia</div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10v18l-2.5-1.5L12 21l-2.5-1.5L7 21V3z"/><path d="M10 8h4M10 12h4"/></svg>Nota fiscal</div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l1.5-5h13L20 10"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>Loja física</div>
+      </div>
+    </header>
+
+    <nav class="filters">
+      <div class="chips noscroll" id="chips"></div>
+    </nav>
+
+    <main class="grid" id="grid"></main>
+
+    <footer class="foot">
+      <div class="addr">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+        <div><b id="lojaEnd"></b><span id="lojaHora"></span></div>
+      </div>
+      <small>Catálogo digital por @pedropaulotech</small>
+    </footer>
+  </section>
+
+  <!-- CONFIGURADOR -->
+  <section id="vProd" class="prod hide">
+    <div class="stage" id="stage">
+      <div class="ptop">
+        <button class="round press" id="back" aria-label="Voltar"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="mk" id="pMarca"></span>
+        <span style="width:44px"></span>
+      </div>
+      <div class="tilt" id="tilt">
+        <div class="gallery noscroll" id="gal"></div>
+      </div>
+      <div class="gcap" id="gcap"></div>
+      <div class="gdots" id="gdots"></div>
+    </div>
+
+    <div class="sheet">
+      <div class="tags" id="pTags"></div>
+      <h1 class="pname" id="pNome"></h1>
+      <p class="pspec" id="pResumo"></p>
+
+      <div class="priceblock">
+        <div class="pixlabel">À vista no Pix <b id="pSave"></b></div>
+        <div class="pix num" id="pPix"></div>
+        <div class="instline num" id="pInst"></div>
+      </div>
+
+      <div class="group">
+        <div class="glabel">Cor <b id="corNome"></b></div>
+        <div class="swatches" id="sw"></div>
+      </div>
+
+      <div class="group">
+        <div class="glabel">Armazenamento</div>
+        <div class="pills" id="gbP"></div>
+      </div>
+
+      <div class="group">
+        <div class="glabel">Condição</div>
+        <div class="pills" id="condP"></div>
+        <div id="semi"></div>
+      </div>
+
+      <div class="group">
+        <div class="glabel">Simule o pagamento <b>entrada + cartão</b></div>
+        <div class="entrada">
+          <label for="ent">Entrada no Pix ou dinheiro (opcional)</label>
+          <div class="ent-in"><span>R$</span><input id="ent" class="num" inputmode="numeric" placeholder="0" autocomplete="off" aria-label="Valor da entrada em reais"></div>
+          <div class="ent-q" id="entQ"></div>
+          <div class="ent-msg" id="entMsg"></div>
+        </div>
+        <div class="glabel" style="margin-top:16px">Restante no cartão <b>toque na parcela</b></div>
+        <div class="parc noscroll" id="parc"></div>
+        <div class="resumo num" id="parcSum"></div>
+      </div>
+
+      <div class="group">
+        <div class="glabel">Ficha técnica</div>
+        <div class="specs" id="specs"></div>
+        <div class="warranty" id="warr"></div>
+      </div>
+    </div>
+
+    <div class="ctabar">
+      <a class="cta press" id="cta" href="#" target="_blank" rel="noopener">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/></svg></span>
+        <span>Quero esse</span><span class="cp num" id="ctaP"></span>
+      </a>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =========================================================
+   DADOS DA LOJA — troque este objeto (equivale ao loja.json)
+   ========================================================= */
+const LOJA = {
+  loja: {
+    nome: "Prime Cell",
+    sigla: "PC",
+    bairro: "Calhau · São Luís",
+    whatsapp: "5598984865648",
+    endereco: "Av. dos Holandeses, Calhau – São Luís/MA",
+    horario: "Seg a sáb · 9h às 19h",
+    cor_destaque: "#8B5CF6",
+    garantia_novo: "1 ano de garantia de fábrica",
+    garantia_seminovo: "90 dias de garantia da loja",
+    obs_novo: "Com nota fiscal · retire na loja ou receba em casa",
+    obs_seminovo: "Retire na loja ou receba em casa"
+  },
+  pagamento: {
+    repassa_juros: true,
+    parcelas_sem_juros: 1,
+    max_parcelas: 12,
+    taxas: {1:3.2,2:4.6,3:5.4,4:6.2,5:7.0,6:7.8,7:8.6,8:9.3,9:10.0,10:10.7,11:11.4,12:12.0}
+  },
+  produtos: [
+    { id:"iphone-16", marca:"Apple", modelo:"iPhone 16", cam:"apple-v",
+      specs:{tela:'6,1" Super Retina XDR',chip:"A18",camera:"48 MP Fusion",bateria:"Até 22h de vídeo"},
+      cores:[{nome:"Ultramarino",hex:"#6F7FD6"},{nome:"Verde-acinzentado",hex:"#B0C9C4"},{nome:"Rosa",hex:"#F2BFD5"},{nome:"Branco",hex:"#F2F2EE"},{nome:"Preto",hex:"#2E2E30"}],
+      variantes:[
+        {gb:128,condicao:"novo",preco_pix:5999,cores:["Ultramarino","Verde-acinzentado","Rosa","Branco","Preto"],estoque:4},
+        {gb:256,condicao:"novo",preco_pix:6799,cores:["Ultramarino","Preto"],estoque:2}
+      ]},
+    { id:"iphone-15-pro", marca:"Apple", modelo:"iPhone 15 Pro", cam:"apple-pro",
+      specs:{tela:'6,1" ProMotion 120 Hz',chip:"A17 Pro",camera:"48 MP + tele 3x",bateria:"Até 23h de vídeo"},
+      cores:[{nome:"Titânio Natural",hex:"#BEB7AC"},{nome:"Titânio Azul",hex:"#3F4757"},{nome:"Titânio Preto",hex:"#3B3B3D"},{nome:"Titânio Branco",hex:"#E9E7E2"}],
+      variantes:[
+        {gb:128,condicao:"seminovo",preco_pix:5299,bateria:93,estado:"Impecável",cores:["Titânio Natural","Titânio Preto"],estoque:2},
+        {gb:256,condicao:"seminovo",preco_pix:5799,bateria:96,estado:"Impecável",cores:["Titânio Azul","Titânio Branco"],estoque:{"Titânio Azul":1,"Titânio Branco":1}}
+      ]},
+    { id:"iphone-15", marca:"Apple", modelo:"iPhone 15", cam:"apple-d",
+      specs:{tela:'6,1" Super Retina XDR',chip:"A16 Bionic",camera:"48 MP",bateria:"Até 20h de vídeo"},
+      cores:[{nome:"Azul",hex:"#D4E1EA",fotos:["img/iphone15-azul-1.webp","img/iphone15-azul-2.webp","img/iphone15-azul-3.webp"]},{nome:"Preto",hex:"#3A3A3C",fotos:["img/iphone15-preto-1.webp","img/iphone15-preto-2.webp","img/iphone15-preto-3.webp"]},{nome:"Verde",hex:"#DDE8D8",fotos:["img/iphone15-verde-1.webp","img/iphone15-verde-2.webp","img/iphone15-verde-3.webp"]},{nome:"Rosa",hex:"#F6D6D9",fotos:["img/iphone15-rosa-1.webp","img/iphone15-rosa-2.webp","img/iphone15-rosa-3.webp"]},{nome:"Amarelo",hex:"#F3EBC6",fotos:["img/iphone15-amarelo-1.webp","img/iphone15-amarelo-2.webp","img/iphone15-amarelo-3.webp"]}],
+      variantes:[
+        {gb:128,condicao:"novo",preco_pix:4799,cores:["Azul","Preto","Verde","Rosa"],estoque:3},
+        {gb:256,condicao:"novo",preco_pix:5499,cores:["Preto","Azul"],estoque:2},
+        {gb:128,condicao:"seminovo",preco_pix:3999,bateria:91,estado:"Excelente",cores:["Azul","Amarelo"],estoque:1}
+      ]},
+    { id:"iphone-14", marca:"Apple", modelo:"iPhone 14", cam:"apple-d",
+      specs:{tela:'6,1" Super Retina XDR',chip:"A15 Bionic",camera:"12 MP dupla",bateria:"Até 20h de vídeo"},
+      cores:[{nome:"Meia-noite",hex:"#232A31"},{nome:"Estelar",hex:"#F2EBE3"},{nome:"Roxo",hex:"#D6CDE0"},{nome:"Azul",hex:"#A7C1D9"}],
+      variantes:[
+        {gb:128,condicao:"novo",preco_pix:3899,cores:["Meia-noite","Estelar"],estoque:2},
+        {gb:128,condicao:"seminovo",preco_pix:3199,bateria:89,estado:"Excelente",cores:["Roxo","Meia-noite","Azul"],estoque:3},
+        {gb:256,condicao:"seminovo",preco_pix:3599,bateria:92,estado:"Impecável",cores:["Azul"],estoque:1}
+      ]},
+    { id:"iphone-13", marca:"Apple", modelo:"iPhone 13", cam:"apple-d",
+      specs:{tela:'6,1" Super Retina XDR',chip:"A15 Bionic",camera:"12 MP dupla",bateria:"Até 19h de vídeo"},
+      cores:[{nome:"Meia-noite",hex:"#1F2329"},{nome:"Estelar",hex:"#F2EBE3"},{nome:"Azul",hex:"#3E5E7E"},{nome:"Rosa",hex:"#F5D8D5"}],
+      variantes:[
+        {gb:128,condicao:"seminovo",preco_pix:2599,bateria:87,estado:"Muito bom",cores:["Meia-noite","Azul","Estelar","Rosa"],estoque:5},
+        {gb:256,condicao:"seminovo",preco_pix:2899,bateria:90,estado:"Excelente",cores:["Meia-noite"],estoque:1}
+      ]},
+    { id:"galaxy-s24", marca:"Samsung", modelo:"Galaxy S24", cam:"samsung",
+      specs:{tela:'6,2" AMOLED 120 Hz',chip:"Exynos 2400",camera:"50 MP tripla",bateria:"4.000 mAh"},
+      cores:[{nome:"Preto Ônix",hex:"#2B2C30"},{nome:"Cinza Mármore",hex:"#C9C9C7"},{nome:"Violeta Cobalto",hex:"#B5A9D3"},{nome:"Amarelo Âmbar",hex:"#EFE2B0"}],
+      variantes:[
+        {gb:128,condicao:"novo",preco_pix:3999,cores:["Preto Ônix","Cinza Mármore","Violeta Cobalto"],estoque:5},
+        {gb:256,condicao:"novo",preco_pix:4399,cores:["Preto Ônix","Amarelo Âmbar"],estoque:2},
+        {gb:256,condicao:"seminovo",preco_pix:3299,bateria:95,estado:"Impecável",cores:["Violeta Cobalto"],estoque:1}
+      ]},
+    { id:"galaxy-a55", marca:"Samsung", modelo:"Galaxy A55 5G", cam:"samsung",
+      specs:{tela:'6,6" Super AMOLED',chip:"Exynos 1480",camera:"50 MP tripla",bateria:"5.000 mAh"},
+      cores:[{nome:"Azul Escuro",hex:"#2D3A5A"},{nome:"Azul Claro",hex:"#BFD3E6"},{nome:"Lilás",hex:"#CBBEE2"}],
+      variantes:[
+        {gb:128,condicao:"novo",preco_pix:1999,cores:["Azul Escuro","Azul Claro","Lilás"],estoque:6},
+        {gb:256,condicao:"novo",preco_pix:2299,cores:["Azul Escuro","Lilás"],estoque:3}
+      ]},
+    { id:"redmi-note-13", marca:"Xiaomi", modelo:"Redmi Note 13", cam:"xiaomi",
+      specs:{tela:'6,67" AMOLED 120 Hz',chip:"Snapdragon 685",camera:"108 MP",bateria:"5.000 mAh"},
+      cores:[{nome:"Preto",hex:"#232326"},{nome:"Verde Menta",hex:"#BFE3D2"},{nome:"Azul Gelo",hex:"#C9DCEC"}],
+      variantes:[
+        {gb:256,condicao:"novo",preco_pix:1499,cores:["Preto","Verde Menta","Azul Gelo"],estoque:6}
+      ]}
+  ]
+};
+
+/* ================= utilidades ================= */
+const $ = id => document.getElementById(id);
+const BRL = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
+const BRL0 = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+const money = v => BRL.format(v);
+const money0 = v => Number.isInteger(v) ? BRL0.format(v) : BRL.format(v);
+const round2 = v => Math.round(v*100)/100;
+const P = LOJA.pagamento;
+
+function totalCartao(pix,n){
+  if(!P.repassa_juros || n <= P.parcelas_sem_juros) return pix;
+  return pix/(1 - P.taxas[n]/100);
+}
+const parcela = (pix,n) => round2(totalCartao(pix,n)/n);
+const taxaPct = n => (!P.repassa_juros || n <= P.parcelas_sem_juros) ? 0 : P.taxas[n];
+
+/* estoque pode ser um número (total da variante) ou {cor: qtd} */
+const estq = (v,cor) => typeof v.estoque === 'object' ? (v.estoque[cor]||0) : v.estoque;
+const estqTotal = v => typeof v.estoque === 'object' ? Object.values(v.estoque).reduce((s,x)=>s+x,0) : v.estoque;
+
+function rgb(h){h=h.replace('#','');return [0,2,4].map(i=>parseInt(h.substr(i,2),16))}
+function hex(a){return '#'+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}
+function mix(h,h2,t){const a=rgb(h),b=rgb(h2);return hex(a.map((v,i)=>v+(b[i]-v)*t))}
+function lum(h){const [r,g,b]=rgb(h).map(v=>v/255);return .2126*r+.7152*g+.0722*b}
+const buzz = () => { try{ navigator.vibrate && navigator.vibrate(8) }catch(e){} };
+
+/* ============ desenho do aparelho (placeholder sem marca) ============ */
+let gid = 0;
+function lens(cx,cy,r){
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#0c0c0f" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
+  <circle cx="${cx}" cy="${cy}" r="${r*.56}" fill="#18202d"/>
+  <circle cx="${cx-r*.25}" cy="${cy-r*.28}" r="${r*.17}" fill="rgba(255,255,255,.55)"/>`;
+}
+function camera(style,c){
+  const bump = (x,y,w,h,rx)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${mix(c,'#ffffff',.08)}" stroke="rgba(255,255,255,.22)" stroke-width="1.2"/>
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="rgba(0,0,0,.08)"/>`;
+  const flash = (x,y,r=5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#f4ecd6" opacity=".9"/>`;
+  switch(style){
+    case 'apple-pro': return bump(22,20,86,86,24)+lens(46,44,16)+lens(46,84,16)+lens(84,64,16)+flash(86,34,5);
+    case 'apple-v':   return bump(24,20,50,92,25)+lens(49,45,15)+lens(49,87,15)+flash(84,40,5);
+    case 'samsung':   return lens(42,40,13)+lens(42,76,13)+lens(42,112,13)+flash(70,40,4);
+    case 'xiaomi':    return bump(22,20,96,70,20)+lens(50,55,19)+lens(94,44,12)+flash(94,72,5);
+    default:          return bump(22,20,80,80,22)+lens(45,43,16)+lens(79,77,16)+flash(80,42,5);
+  }
+}
+function phoneSVG(prod,c,view){
+  const id = 'g'+(++gid);
+  const edge = lum(c) < .3 ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.35)';
+  if(view === 'frente'){
+    const isApple = prod.marca === 'Apple';
+    return `<svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs><radialGradient id="${id}" cx=".3" cy=".25" r="1">
+        <stop offset="0" stop-color="${mix(c,'#ffffff',.35)}"/><stop offset=".45" stop-color="${c}"/><stop offset="1" stop-color="#0b0b0f"/></radialGradient></defs>
+      <rect x="9" y="4" width="182" height="392" rx="36" fill="${c}" stroke="${edge}" stroke-width="1.5"/>
+      <rect x="14" y="9" width="172" height="382" rx="31" fill="#050506"/>
+      <rect x="19" y="14" width="162" height="372" rx="27" fill="url(#${id})"/>
+      ${isApple ? '<rect x="73" y="26" width="54" height="16" rx="8" fill="#000"/>' : '<circle cx="100" cy="30" r="6" fill="#000"/>'}
+      <text x="100" y="112" text-anchor="middle" font-family="Inter,sans-serif" font-size="40" font-weight="600" fill="rgba(255,255,255,.92)">9:41</text>
+      <text x="100" y="78" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="rgba(255,255,255,.75)">sexta-feira, 13</text>
+      <rect x="70" y="370" width="60" height="4" rx="2" fill="rgba(255,255,255,.7)"/>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".26"/></linearGradient></defs>
+    <rect x="191" y="96" width="3" height="54" rx="1.5" fill="${mix(c,'#000000',.25)}"/>
+    <rect x="6" y="80" width="3" height="28" rx="1.5" fill="${mix(c,'#000000',.25)}"/>
+    <rect x="6" y="120" width="3" height="40" rx="1.5" fill="${mix(c,'#000000',.25)}"/>
+    <rect x="9" y="4" width="182" height="392" rx="36" fill="${c}"/>
+    <rect x="9" y="4" width="182" height="392" rx="36" fill="url(#${id})"/>
+    <rect x="9.75" y="4.75" width="180.5" height="390.5" rx="35.5" fill="none" stroke="${edge}" stroke-width="1.5"/>
+    ${camera(prod.cam,c)}
+  </svg>`;
+}
+
+/* ================= VITRINE ================= */
+const F = { marca:'Todas', cond:null };
+function renderChips(){
+  const marcas = ['Todas', ...new Set(LOJA.produtos.map(p=>p.marca))];
+  const conds = [['novo','Novos'],['seminovo','Seminovos']];
+  $('chips').innerHTML =
+    marcas.map(m=>`<button class="chip press ${F.marca===m?'on':''}" data-m="${m}">${m}</button>`).join('') +
+    `<span class="sep"></span>` +
+    conds.map(([k,l])=>`<button class="chip press ${F.cond===k?'on':''}" data-c="${k}">${l}</button>`).join('');
+  $('chips').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{F.marca=b.dataset.m;buzz();renderChips();renderGrid()});
+  $('chips').querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{F.cond=F.cond===b.dataset.c?null:b.dataset.c;buzz();renderChips();renderGrid()});
+}
+function renderGrid(){
+  const list = LOJA.produtos.filter(p =>
+    (F.marca==='Todas' || p.marca===F.marca) &&
+    (!F.cond || p.variantes.some(v=>v.condicao===F.cond)));
+  if(!list.length){ $('grid').innerHTML = `<div class="empty">Nenhum aparelho com esse filtro.</div>`; return; }
+  $('grid').innerHTML = list.map((p,i)=>{
+    const vs = p.variantes.filter(v=>!F.cond || v.condicao===F.cond);
+    const min = Math.min(...vs.map(v=>v.preco_pix));
+    const conds = [...new Set(vs.map(v=>v.condicao))];
+    const est = vs.reduce((s,v)=>s+estqTotal(v),0);
+    const fc = p.cores.find(k=>k.fotos&&k.fotos.length);
+    const c = (fc||p.cores[0]).hex;
+    const pic = fc ? `<img src="${fc.fotos[0]}" alt="${p.modelo}" loading="lazy">` : phoneSVG(p,c,'traseira');
+    const flag = est<=2 ? `<span class="flag hot">Últimas unidades</span>`
+               : conds.length===1 && conds[0]==='seminovo' ? `<span class="flag">Seminovo</span>` : '';
+    return `<button class="card press" style="animation-delay:${i*45}ms" data-id="${p.id}">
+      <div class="thumb">${pic}${flag}</div>
+      <div class="dotsrow">${p.cores.slice(0,6).map(k=>`<i style="background:${k.hex}"></i>`).join('')}</div>
+      <h3>${p.modelo}</h3>
+      <p class="cond">${conds.map(x=>x==='novo'?'Novo':'Seminovo').join(' · ')} · ${[...new Set(vs.map(v=>v.gb))].sort((a,b)=>a-b).map(g=>g+'GB').join(', ')}</p>
+      <p class="from">a partir de</p>
+      <p class="price num">${money0(min)}</p>
+      <p class="inst num">ou ${P.max_parcelas}x ${money(parcela(min,P.max_parcelas))}</p>
+    </button>`;
+  }).join('');
+  $('grid').querySelectorAll('.card').forEach(b=>b.onclick=()=>{ buzz(); enableTilt(); fromCat=true; location.hash='p-'+b.dataset.id; });
+}
+
+/* ================= CONFIGURADOR ================= */
+let prod=null, S=null, combos=[], fromCat=false, catScroll=0, shownPix=0;
+
+function combosOf(p){ return p.variantes.flatMap(v=>v.cores.filter(cor=>estq(v,cor)>0).map(cor=>({v,gb:v.gb,cond:v.condicao,cor}))); }
+function pick(k,val){
+  const W = {gb:2,cond:4,cor:3};
+  const cs = combos.filter(c=>c[k]===val);
+  cs.sort((a,b)=>{
+    const sa = ['gb','cond','cor'].reduce((s,x)=>s+(x!==k && a[x]===S[x]?W[x]:0),0);
+    const sb = ['gb','cond','cor'].reduce((s,x)=>s+(x!==k && b[x]===S[x]?W[x]:0),0);
+    return sb-sa || a.v.preco_pix-b.v.preco_pix;
+  });
+  const c = cs[0]; if(!c) return;
+  S.gb=c.gb; S.cond=c.cond; S.cor=c.cor; S.v=c.v;
+}
+const avail = (k,val) => combos.some(c=>c[k]===val && ['gb','cond','cor'].every(x=>x===k || c[x]===S[x]));
+
+function openProd(p){
+  if(prod!==p || !S){
+    prod=p; combos=combosOf(p);
+    const hasF = cor => { const k=p.cores.find(x=>x.nome===cor); return k&&k.fotos&&k.fotos.length?1:0; };
+    const c = [...combos].sort((a,b)=>hasF(b.cor)-hasF(a.cor) || (a.cond==='novo'?0:1)-(b.cond==='novo'?0:1) || a.v.preco_pix-b.v.preco_pix)[0];
+    S = {gb:c.gb,cond:c.cond,cor:c.cor,v:c.v,n:P.max_parcelas,ent:0};
+    $('ent').value = '';
+    shownPix = c.v.preco_pix;
+  }
+  catScroll = window.scrollY;
+  $('vCat').classList.add('hide'); $('vProd').classList.remove('hide');
+  window.scrollTo(0,0);
+  document.title = p.modelo+' · '+LOJA.loja.nome;
+  $('pMarca').textContent = p.marca;
+  $('pNome').textContent = p.modelo;
+  $('pResumo').textContent = `${p.specs.tela} · ${p.specs.chip}`;
+  renderSpecs();
+  renderGallery(false);
+  delete $('parc').dataset.ready;
+  renderAll();
+}
+function showCat(){
+  $('vProd').classList.add('hide'); $('vCat').classList.remove('hide');
+  document.title = LOJA.loja.nome+' · Catálogo';
+  requestAnimationFrame(()=>window.scrollTo(0,catScroll));
+}
+
+function corHex(){ return prod.cores.find(c=>c.nome===S.cor).hex; }
+
+function renderGallery(fade=true){
+  const c = corHex(), g=$('gal');
+  const corObj = prod.cores.find(x=>x.nome===S.cor);
+  const fotos = (corObj.fotos||[]);
+  const build = () => {
+    const slides = fotos.length
+      ? fotos.map(src=>`<div class="slide"><img src="${src}" alt="${prod.modelo} ${S.cor}" loading="lazy"></div>`)
+      : [['traseira','Traseira'],['frente','Frente']].map(([v])=>`<div class="slide"><div class="float" style="height:100%;display:flex;align-items:center">${phoneSVG(prod,c,v)}</div></div>`);
+    g.innerHTML = slides.join('');
+    $('gdots').innerHTML = slides.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('');
+    $('gcap').textContent = fotos.length ? '' : 'Arraste para ver a frente';
+    g.scrollLeft = 0;
+  };
+  if(!fade){ build(); return; }
+  g.classList.add('fade');
+  setTimeout(()=>{ build(); g.classList.remove('fade'); },200);
+}
+$('gal').addEventListener('scroll',()=>{
+  const g=$('gal'), i=Math.round(g.scrollLeft/g.clientWidth);
+  [...$('gdots').children].forEach((d,k)=>d.classList.toggle('on',k===i));
+  if(i>0) $('gcap').textContent='';
+},{passive:true});
+
+function animatePix(to){
+  const el=$('pPix'), from=shownPix, t0=performance.now(), d=450;
+  if(from===to || matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent=money(to); shownPix=to; return; }
+  const step=t=>{
+    const k=Math.min(1,(t-t0)/d), e=1-Math.pow(1-k,3);
+    el.textContent = money(Math.round(from+(to-from)*e));
+    if(k<1) requestAnimationFrame(step); else { el.textContent=money(to); shownPix=to; }
+  };
+  requestAnimationFrame(step);
+}
+
+function renderAll(){
+  const v=S.v;
+
+  // tags (estoque da cor escolhida)
+  const tags=[], q=estq(v,S.cor);
+  tags.push(v.condicao==='novo'?`<span class="tag ok">Novo · lacrado</span>`:`<span class="tag">Seminovo · ${v.estado}</span>`);
+  if(v.condicao==='seminovo') tags.push(`<span class="tag">🔋 ${v.bateria}%</span>`);
+  if(q===1) tags.push(`<span class="tag hot">Só 1 unidade</span>`);
+  else if(q===2) tags.push(`<span class="tag hot">Últimas 2 unidades</span>`);
+  $('pTags').innerHTML = tags.join('');
+
+  // cores
+  $('corNome').textContent = S.cor;
+  $('sw').innerHTML = prod.cores.map(c=>`<button class="sw press ${c.nome===S.cor?'on':''} ${avail('cor',c.nome)?'':'off'}" data-v="${c.nome}" aria-label="${c.nome}"><span style="background:${c.hex}"></span></button>`).join('');
+  $('sw').querySelectorAll('.sw').forEach(b=>b.onclick=()=>{ if(b.dataset.v===S.cor) return; buzz(); pick('cor',b.dataset.v); renderGallery(); renderAll(); });
+
+  // armazenamento
+  const gbs=[...new Set(combos.map(c=>c.gb))].sort((a,b)=>a-b);
+  $('gbP').innerHTML = gbs.map(g=>{
+    const cands = combos.filter(c=>c.gb===g && c.cond===S.cond).map(c=>c.v.preco_pix);
+    const pr = cands.length? Math.min(...cands) : Math.min(...combos.filter(c=>c.gb===g).map(c=>c.v.preco_pix));
+    return `<button class="pill press ${g===S.gb?'on':''} ${avail('gb',g)?'':'off'}" data-v="${g}">${g} GB<small class="num">${money0(pr)}</small></button>`;
+  }).join('');
+  $('gbP').querySelectorAll('.pill').forEach(b=>b.onclick=()=>{ const g=+b.dataset.v; if(g===S.gb) return; const old=S.cor; buzz(); pick('gb',g); if(S.cor!==old) renderGallery(); renderAll(); });
+
+  // condição
+  const conds=[...new Set(combos.map(c=>c.cond))].sort((a,b)=>a==='novo'?-1:1);
+  $('condP').innerHTML = conds.map(k=>{
+    const pr = Math.min(...combos.filter(c=>c.cond===k).map(c=>c.v.preco_pix));
+    return `<button class="pill press ${k===S.cond?'on':''} ${avail('cond',k)?'':'off'}" data-v="${k}">${k==='novo'?'Novo':'Seminovo'}<small class="num">a partir de ${money0(pr)}</small></button>`;
+  }).join('');
+  $('condP').querySelectorAll('.pill').forEach(b=>b.onclick=()=>{ if(b.dataset.v===S.cond) return; const old=S.cor; buzz(); pick('cond',b.dataset.v); if(S.cor!==old) renderGallery(); renderAll(); });
+
+  $('semi').innerHTML = v.condicao==='seminovo' ? `<div class="semi">
+      <div class="row"><span>Saúde da bateria</span><b>${v.bateria}%</b></div>
+      <div class="bar"><i style="width:${v.bateria}%"></i></div>
+      <div class="row"><span>Estado do aparelho</span><b>${v.estado}</b></div>
+    </div>` : '';
+
+  // garantia
+  const novo = v.condicao==='novo';
+  $('warr').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+    <div><b>${novo?LOJA.loja.garantia_novo:LOJA.loja.garantia_seminovo}</b>${novo?LOJA.loja.obs_novo:LOJA.loja.obs_seminovo}</div>`;
+
+  renderPay();
+}
+
+/* ============ pagamento: entrada + cartão ============ */
+function calcPay(){
+  const pix = S.v.preco_pix;
+  const ent = Math.min(S.ent, pix);
+  const rest = round2(pix - ent);
+  const n = S.n;
+  const cartao = rest>0 ? round2(totalCartao(rest,n)) : 0;
+  return { pix, ent, rest, n, cartao,
+    taxa: round2(cartao - rest), pct: taxaPct(n),
+    par: rest>0 ? round2(cartao/n) : 0,
+    total: round2(ent + cartao) };
+}
+
+function renderPay(){
+  const pix = S.v.preco_pix;
+  if(S.ent > pix) S.ent = pix;
+  const c = calcPay();
+  const comCartao = c.rest > 0;
+
+  // bloco de preço (topo) — mesma conta do resumo
+  animatePix(pix);
+  const eco = round2(c.total - pix);
+  $('pSave').textContent = eco>0 ? `· economize ${money0(Math.round(eco))}` : '';
+  $('pInst').innerHTML = !comCartao ? 'Entrada cobre o valor total'
+    : c.ent>0 ? `ou <b>${money0(c.ent)} + ${c.n}x de ${money(c.par)}</b> no cartão`
+              : `ou <b>${c.n}x de ${money(c.par)}</b> no cartão`;
+
+  // atalhos de entrada
+  const opts = [['Sem entrada',0],...[10,20,30,50].map(p=>[p+'%',Math.round(pix*p/100/10)*10])];
+  $('entQ').innerHTML = opts.map(([l,val])=>`<button class="press ${S.ent===val?'on':''}" data-v="${val}">${l}</button>`).join('');
+  $('entQ').querySelectorAll('button').forEach(b=>b.onclick=()=>{ buzz(); setEnt(+b.dataset.v); });
+  $('entMsg').textContent = S.ent>=pix ? 'A entrada já cobre o valor total. Pague tudo no Pix.' : '';
+
+  // parcelas (sobre o restante)
+  const ns=[...Array(P.max_parcelas)].map((_,i)=>i+1);
+  $('parc').innerHTML = ns.map(k=>`<button class="pc press ${k===c.n?'on':''}" data-n="${k}" ${comCartao?'':'disabled'}>
+      <b>${k}x</b><small class="num">${comCartao?money(parcela(c.rest,k)):'—'}</small>${taxaPct(k)===0?'<em>sem juros</em>':''}</button>`).join('');
+  $('parc').querySelectorAll('.pc').forEach(b=>b.onclick=()=>{ buzz(); S.n=+b.dataset.n; renderPay(); });
+  requestAnimationFrame(()=>{ const box=$('parc'), on=box.querySelector('.pc.on'); if(!on) return; const x=on.offsetLeft-box.clientWidth/2+on.clientWidth/2; box.scrollTo({left:x,behavior:box.dataset.ready?'smooth':'auto'}); box.dataset.ready=1; });
+
+  // resumo
+  const row = (l,v,cls='') => `<div class="row ${cls}"><span>${l}</span><b>${v}</b></div>`;
+  let h = '';
+  if(c.ent>0) h += row('Entrada (Pix/dinheiro)', money(c.ent));
+  if(comCartao){
+    h += row('Restante no cartão', money(c.rest));
+    h += row(`Taxa da maquininha (${String(c.pct).replace('.',',')}%)`, c.taxa>0 ? '+ '+money(c.taxa) : 'sem taxa', c.taxa>0?'fee':'');
+    h += row('Total no cartão', money(c.cartao));
+    h += row('Parcelas', `${c.n}x de ${money(c.par)}`);
+  }
+  h += row('Total pago', money(c.total), 'total');
+  if(eco>0) h += `<div class="save">No Pix à vista você economiza ${money(eco)}</div>`;
+  $('parcSum').innerHTML = h;
+
+  // CTA + mensagem
+  const v = S.v;
+  const cond = v.condicao==='novo' ? 'Novo' : `Seminovo (bateria ${v.bateria}%)`;
+  let pag;
+  if(!comCartao) pag = `💰 Pagamento à vista: ${money(pix)}`;
+  else {
+    pag = `💰 À vista no Pix: ${money(pix)}\n💳 Simulação: `;
+    pag += c.ent>0 ? `entrada de ${money(c.ent)} + ${c.n}x de ${money(c.par)} no cartão` : `${c.n}x de ${money(c.par)} no cartão`;
+    pag += ` (total ${money(c.total)})`;
+  }
+  const msg = `Olá! Vi no catálogo e tenho interesse:\n📱 *${prod.modelo} – ${v.gb}GB – ${S.cor}*\nCondição: ${cond}\n${pag}\nAinda está disponível?`;
+  $('cta').href = `https://wa.me/${LOJA.loja.whatsapp}?text=${encodeURIComponent(msg)}`;
+  $('ctaP').textContent = !comCartao ? `· ${money0(pix)}`
+    : c.ent>0 ? `· ${money0(c.ent)} + ${c.n}x` : `· ${c.n}x ${money(c.par)}`;
+}
+
+function setEnt(val){
+  S.ent = Math.max(0, Math.min(val, S.v.preco_pix));
+  $('ent').value = S.ent ? S.ent.toLocaleString('pt-BR') : '';
+  renderPay();
+}
+$('ent').addEventListener('input', e=>{
+  const digits = e.target.value.replace(/\D/g,'').slice(0,7);
+  const val = digits ? Math.min(+digits, S.v.preco_pix) : 0;
+  S.ent = val;
+  e.target.value = val ? val.toLocaleString('pt-BR') : '';
+  renderPay();
+});
+
+function renderSpecs(){
+  const I = {
+    tela:'<rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 5h3"/>',
+    chip:'<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>',
+    camera:'<path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H8l1.5-2h5L16 6h2.5A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.5"/>',
+    bateria:'<rect x="2.5" y="7" width="17" height="10" rx="2.5"/><path d="M22 10.5v3"/><path d="M6 10v4M9.5 10v4M13 10v4"/>'
+  };
+  const L = {tela:'Tela',chip:'Processador',camera:'Câmera',bateria:'Bateria'};
+  $('specs').innerHTML = Object.keys(L).map(k=>`<div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${I[k]}</svg><span>${L[k]}</span><b>${prod.specs[k]}</b></div>`).join('');
+}
+
+/* inclinação 3D com giroscópio (quando o navegador permitir) */
+let tiltOn=false;
+function enableTilt(){
+  if(tiltOn || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const start=()=>{ tiltOn=true; window.addEventListener('deviceorientation',e=>{
+    if(e.gamma==null) return;
+    const x=Math.max(-12,Math.min(12,e.gamma))/12, y=Math.max(-12,Math.min(12,(e.beta||45)-45))/12;
+    $('tilt').style.transform=`perspective(900px) rotateY(${x*9}deg) rotateX(${-y*6}deg)`;
+  },{passive:true}); };
+  try{
+    if(typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function'){
+      DeviceOrientationEvent.requestPermission().then(r=>{ if(r==='granted') start(); }).catch(()=>{});
+    } else if('DeviceOrientationEvent' in window){ start(); }
+  }catch(e){}
+}
+
+/* ================= rotas ================= */
+$('back').onclick=()=>{ buzz(); if(fromCat){ fromCat=false; history.back(); } else { location.hash='inicio'; } };
+function route(){
+  const h=location.hash.slice(1);
+  if(h.startsWith('p-')){ const p=LOJA.produtos.find(x=>x.id===h.slice(2)); if(p) return openProd(p); }
+  showCat();
+}
+window.addEventListener('hashchange',route);
+
+/* ================= init ================= */
+(function init(){
+  const L=LOJA.loja;
+  document.documentElement.style.setProperty('--accent',L.cor_destaque);
+  $('logo').textContent=L.sigla; $('lojaNome').textContent=L.nome; $('lojaBairro').textContent=L.bairro;
+  $('lojaEnd').textContent=L.endereco; $('lojaHora').textContent=L.horario;
+  renderChips(); renderGrid(); route();
+})();
+</script>
+</body>
+</html>
