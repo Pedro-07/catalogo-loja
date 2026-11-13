@@ -99,7 +99,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .gdots i.on{width:18px;background:var(--text)}
 .gcap{position:absolute;z-index:2;bottom:30px;left:0;right:0;text-align:center;font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
 
-.sheet{position:relative;z-index:2;padding:6px 20px calc(120px + var(--safe-b))}
+.sheet{position:relative;z-index:2;padding:6px 20px calc(84px + var(--safe-b))}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .tag{font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line2)}
 .tag.hot{color:#FDBA74;border-color:rgba(253,186,116,.35);background:rgba(253,186,116,.08)}
@@ -172,11 +172,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .warranty svg{flex:0 0 22px;stroke:#86EFAC}
 .warranty b{color:var(--text);font-weight:600;display:block;font-size:14px}
 
-.ctabar{position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:18px 16px calc(12px + var(--safe-b));background:linear-gradient(to top,rgba(11,11,15,.98) 55%,rgba(11,11,15,0))}
-.cta{display:flex;align-items:center;justify-content:center;gap:10px;height:58px;border-radius:18px;background:#fff;color:#0B0B0F;font-weight:600;font-size:16px;text-decoration:none;box-shadow:0 10px 30px -10px rgba(255,255,255,.25)}
-.cta .ic{width:30px;height:30px;border-radius:50%;background:var(--wa);display:grid;place-items:center}
-.cta .ic svg{width:17px;height:17px}
-.cta .cp{color:#52525B;font-weight:500;font-size:14px;white-space:nowrap}
+.ctabar{position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:8px 16px calc(8px + var(--safe-b));background:rgba(11,11,15,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:14px;background:#fff;color:#0B0B0F;font-weight:600;font-size:15px;text-decoration:none}
+.cta .ic{width:24px;height:24px;border-radius:50%;background:var(--wa);display:grid;place-items:center}
+.cta .ic svg{width:14px;height:14px}
+.cta .cp{color:#52525B;font-weight:500;font-size:13px;white-space:nowrap}
 
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
