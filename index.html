@@ -183,9 +183,21 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .spec svg{width:22px;height:22px;stroke:var(--text);opacity:.85}
 .spec span{font-size:12px;color:var(--muted)}
 .spec b{font-size:14px;font-weight:600;line-height:1.25}
-.warranty{margin-top:12px;display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);font-size:13px;color:var(--muted)}
+.warranty{margin-top:14px;display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);font-size:13px;color:var(--muted)}
 .warranty svg{flex:0 0 22px;stroke:#86EFAC}
 .warranty b{color:var(--text);font-weight:600;display:block;font-size:14px}
+
+/* blocos recolhíveis (simulador, ficha técnica) */
+.disc{margin-top:14px;border-top:1px solid var(--line2);padding-top:2px}
+.dischead{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:13px 2px}
+.disctitle{display:flex;align-items:center;gap:12px;min-width:0}
+.disctitle>svg{flex:0 0 22px;width:22px;height:22px;stroke:var(--text);opacity:.85}
+.disctitle b{font-weight:600;font-size:15px;display:block}
+.disctitle small{font-size:12px;color:var(--muted);display:block;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dischead .chev{flex:0 0 20px;width:20px;height:20px;stroke:var(--muted);transition:transform .25s}
+.disc.open .chev{transform:rotate(180deg)}
+.discbody{display:none;padding-bottom:4px}
+.disc.open .discbody{display:block;animation:in .3s ease}
 
 .ctabar{position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:8px 16px calc(8px + var(--safe-b));background:rgba(11,11,15,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
 .cta{display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:14px;background:#fff;color:#0B0B0F;font-weight:600;font-size:15px;text-decoration:none}
@@ -277,7 +289,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     <div class="sheet">
       <div class="tags" id="pTags"></div>
       <h1 class="pname" id="pNome"></h1>
-      <p class="pspec" id="pResumo"></p>
 
       <div class="priceblock">
         <div class="pixlabel">À vista no Pix <b id="pSave"></b></div>
@@ -301,24 +312,41 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
         <div class="pills" id="gbP"></div>
       </div>
 
-      <div class="group">
-        <div class="glabel">Simule o pagamento <b>entrada + cartão</b></div>
-        <div class="entrada">
-          <label for="ent">Entrada no Pix ou dinheiro (opcional)</label>
-          <div class="ent-in"><span>R$</span><input id="ent" class="num" inputmode="numeric" placeholder="0" autocomplete="off" aria-label="Valor da entrada em reais"></div>
-          <div class="ent-q" id="entQ"></div>
-          <div class="ent-msg" id="entMsg"></div>
+      <div class="disc" id="discPay">
+        <button class="dischead press" id="payHead" type="button" aria-expanded="false" aria-controls="payBody">
+          <span class="disctitle">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/></svg>
+            <span><b>Simular entrada e parcelas</b><small>Entrada no Pix + cartão, com o total</small></span>
+          </span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="discbody" id="payBody">
+          <div class="entrada">
+            <label for="ent">Entrada no Pix ou dinheiro (opcional)</label>
+            <div class="ent-in"><span>R$</span><input id="ent" class="num" inputmode="numeric" placeholder="0" autocomplete="off" aria-label="Valor da entrada em reais"></div>
+            <div class="ent-q" id="entQ"></div>
+            <div class="ent-msg" id="entMsg"></div>
+          </div>
+          <div class="glabel" style="margin-top:16px">Restante no cartão <b>toque na parcela</b></div>
+          <div class="parc noscroll" id="parc"></div>
+          <div class="resumo num" id="parcSum"></div>
         </div>
-        <div class="glabel" style="margin-top:16px">Restante no cartão <b>toque na parcela</b></div>
-        <div class="parc noscroll" id="parc"></div>
-        <div class="resumo num" id="parcSum"></div>
       </div>
 
-      <div class="group">
-        <div class="glabel">Ficha técnica</div>
-        <div class="specs" id="specs"></div>
-        <div class="warranty" id="warr"></div>
+      <div class="disc" id="discSpec">
+        <button class="dischead press" id="specHead" type="button" aria-expanded="false" aria-controls="specBody">
+          <span class="disctitle">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="16" height="19" rx="3"/><path d="M9 7h6M9 11h6M9 15h3"/></svg>
+            <span><b>Ficha técnica</b><small>Tela, processador, câmera e bateria</small></span>
+          </span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="discbody" id="specBody">
+          <div class="specs" id="specs"></div>
+        </div>
       </div>
+
+      <div class="warranty" id="warr"></div>
     </div>
 
     <div class="ctabar">
@@ -618,11 +646,11 @@ function openProd(p){
   document.title = p.modelo+' · '+LOJA.loja.nome;
   $('pMarca').textContent = p.marca;
   $('pNome').textContent = p.modelo;
-  $('pResumo').textContent = `${p.specs.tela} · ${p.specs.chip}`;
   renderSpecs();
   renderGallery(false);
   delete $('parc').dataset.ready;
   payDetails=false;
+  closeDisc('discPay','payHead'); closeDisc('discSpec','specHead');
   renderAll();
 }
 function showCat(){
@@ -835,6 +863,12 @@ function enableTilt(){
     $('tilt').style.transform=`perspective(900px) rotateY(${x*9}deg) rotateX(${-y*6}deg)`;
   },{passive:true});
 }
+
+/* ============ blocos recolhíveis ============ */
+function closeDisc(discId,headId){ $(discId).classList.remove('open'); $(headId).setAttribute('aria-expanded','false'); }
+function toggleDisc(discId,headId){ buzz(); const open=$(discId).classList.toggle('open'); $(headId).setAttribute('aria-expanded',open); return open; }
+$('payHead').onclick = ()=>{ if(toggleDisc('discPay','payHead')) renderPay(); };
+$('specHead').onclick = ()=>{ toggleDisc('discSpec','specHead'); };
 
 /* ================= rotas ================= */
 $('back').onclick=()=>{ buzz(); if(fromCat){ fromCat=false; history.back(); } else { location.hash='inicio'; } };
