@@ -172,7 +172,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .resumo .row b{color:var(--text);font-weight:600;text-align:right}
 .resumo .row.fee b{color:#FDBA74}
 .resumo .row.total{border-top:1px solid var(--line2);margin-top:6px;padding-top:11px;font-size:15px}
-.resumo .save{margin-top:8px;color:#86EFAC}
+.resumo .det{display:none}
+.resumo .det.open{display:block;margin-top:2px}
+.resumo .detbtn{margin-top:10px;font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:5px;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line2)}
+.resumo .detbtn:active{color:var(--text)}
+.resumo .save{margin-top:10px;color:#86EFAC}
 
 .specs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .spec{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
@@ -560,7 +564,7 @@ $('q').addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
 $('qx').onclick = e=>{ e.preventDefault(); buzz(); setQ(''); $('q').focus(); };
 
 /* ================= CONFIGURADOR ================= */
-let prod=null, S=null, combos=[], fromCat=false, catScroll=0, shownPix=0;
+let prod=null, S=null, combos=[], fromCat=false, catScroll=0, shownPix=0, payDetails=false;
 
 function combosOf(p){ return p.variantes.flatMap(v=>v.cores.filter(cor=>estq(v,cor)>0).map(cor=>({v,gb:v.gb,cond:v.condicao,cor}))); }
 function pick(k,val){
@@ -618,6 +622,7 @@ function openProd(p){
   renderSpecs();
   renderGallery(false);
   delete $('parc').dataset.ready;
+  payDetails=false;
   renderAll();
 }
 function showCat(){
@@ -739,8 +744,7 @@ function renderPay(){
   const eco = round2(c.total - pix);
   $('pSave').textContent = eco>0 ? `· economize ${money0(Math.round(eco))}` : '';
   $('pInst').innerHTML = !comCartao ? 'Entrada cobre o valor total'
-    : c.ent>0 ? `ou <b>${money0(c.ent)} + ${c.n}x de ${money(c.par)}</b> no cartão`
-              : `ou <b>${c.n}x de ${money(c.par)}</b> no cartão`;
+    : `ou parcele em até <b>${P.max_parcelas}x</b> no cartão`;
 
   // atalhos de entrada
   const opts = [['Sem entrada',0],...[10,20,30,50].map(p=>[p+'%',Math.round(pix*p/100/10)*10])];
@@ -755,23 +759,27 @@ function renderPay(){
   $('parc').querySelectorAll('.pc').forEach(b=>b.onclick=()=>{ buzz(); S.n=+b.dataset.n; renderPay(); });
   requestAnimationFrame(()=>{ const box=$('parc'), on=box.querySelector('.pc.on'); if(!on) return; const x=on.offsetLeft-box.clientWidth/2+on.clientWidth/2; box.scrollTo({left:x,behavior:box.dataset.ready?'smooth':'auto'}); box.dataset.ready=1; });
 
-  // resumo
+  // resumo — enxuto por padrão; detalhes da taxa sob demanda
   const row = (l,v,cls='') => `<div class="row ${cls}"><span>${l}</span><b>${v}</b></div>`;
   const detalhe = P.mostrar_taxa !== false;
+  const temDet = detalhe && comCartao && c.taxa>0;
   let h = '';
-  if(c.ent>0) h += row('Entrada (Pix/dinheiro)', money(c.ent));
   if(comCartao){
-    if(detalhe){
-      const effPct = c.rest>0 ? round2(c.taxa/c.rest*100) : 0;
-      h += row('Restante no cartão', money(c.rest));
-      h += row(`Acréscimo do cartão${effPct>0?` (${String(effPct).replace('.',',')}%)`:''}`, c.taxa>0 ? '+ '+money(c.taxa) : 'sem taxa', c.taxa>0?'fee':'');
-      h += row('Total no cartão', money(c.cartao));
-    }
-    h += row('Parcelas', `${c.n}x de ${money(c.par)}`);
+    const plano = c.ent>0 ? `${money0(c.ent)} + ${c.n}x de ${money(c.par)}` : `${c.n}x de ${money(c.par)}`;
+    h += row('No cartão', plano);
   }
-  h += row('Total pago', money(c.total), 'total');
+  h += row('Total', money(c.total), 'total');
+  if(temDet){
+    const effPct = c.rest>0 ? round2(c.taxa/c.rest*100) : 0;
+    let det = '';
+    if(c.ent>0) det += row('Entrada (Pix/dinheiro)', money(c.ent));
+    det += row('Restante no cartão', money(c.rest));
+    det += row(`Acréscimo do cartão${effPct>0?` (${String(effPct).replace('.',',')}%)`:''}`, '+ '+money(c.taxa), 'fee');
+    h += `<button class="detbtn" id="detBtn" type="button">${payDetails?'Ocultar detalhes ▴':'Ver detalhes ▾'}</button><div class="det ${payDetails?'open':''}">${det}</div>`;
+  }
   if(eco>0) h += `<div class="save">No Pix à vista você economiza ${money(eco)}</div>`;
   $('parcSum').innerHTML = h;
+  if(temDet) $('detBtn').onclick = ()=>{ payDetails=!payDetails; renderPay(); };
 
   // CTA + mensagem
   const v = S.v;
