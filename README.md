@@ -44,6 +44,16 @@ As tags `og:url` e `og:image` no `<head>` apontam para o domínio do deploy. Ao 
 - Foto que não carrega vira um aparelho neutro (sem imagem quebrada); erro ao carregar não deixa tela branca, cai num estado com link de WhatsApp.
 - Ao abrir o catálogo, um validador avisa **no console do navegador** sobre dados inconsistentes (id duplicado, cor inexistente, taxa faltando, hex inválido, seminovo sem bateria/estado). Útil ao editar a loja.
 
+## Analytics
+O site usa **Vercel Web Analytics** (sem cookies, respeita a CSP — tudo same-origin). Para começar a coletar, ative uma vez no painel: **Project → Analytics → Enable Web Analytics**. Antes disso o script responde 404 e nada é coletado (sem erro para o visitante).
+
+Além dos page views automáticos, são enviados eventos custom:
+- `produto_visto` (`{ produto }`) — quais aparelhos são abertos
+- `cta_whatsapp` (`{ produto, gb, cor, cond }`) — intenção de compra ao tocar em "Quero esse"
+- `contato_vitrine` — toque no botão de WhatsApp da vitrine
+
+Eventos custom têm limite mensal no plano grátis; para uma loja local, o volume fica bem abaixo disso.
+
 ## Deploy na Vercel
 1. Importe este repositório em vercel.com → **Add New → Project**
 2. Framework: **Other**. Sem build command, output = raiz

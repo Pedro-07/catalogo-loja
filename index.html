@@ -18,6 +18,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Vercel Web Analytics — ative em Project → Analytics no painel da Vercel. Same-origin: já coberto pela CSP. -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
 <style>
 :root{
   --bg:#0B0B0F; --surface:#16161D; --surface2:#1F1F29;
@@ -454,6 +457,8 @@ const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const waNum = () => String((LOJA&&LOJA.loja&&LOJA.loja.whatsapp)||'').replace(/\D/g,'');
 /* cor sempre vira um token hex válido antes de entrar em SVG/estilo (nunca HTML cru) */
 const safeHex = h => /^#[0-9a-fA-F]{3,8}$/.test(String(h)) ? String(h) : '#3A3A3C';
+/* analytics: evento custom (no-op se o Vercel Analytics não estiver ativo) */
+function track(name,data){ try{ window.va && window.va('event', data?{name,data}:{name}); }catch(e){} }
 function textoBusca(p){
   const partes = [p.marca, p.modelo, ...p.cores.map(c=>c.nome)];
   p.variantes.forEach(v=>partes.push(v.gb+'gb', v.gb+' gb', v.condicao));
@@ -565,6 +570,7 @@ function openProd(p){
   $('vCat').classList.add('hide'); $('vProd').classList.remove('hide');
   window.scrollTo(0,0);
   document.title = p.modelo+' · '+LOJA.loja.nome;
+  track('produto_visto', { produto: p.id });
   $('pMarca').textContent = p.marca;
   $('pNome').textContent = p.modelo;
   renderSpecs();
@@ -790,6 +796,10 @@ function closeDisc(discId,headId){ $(discId).classList.remove('open'); $(headId)
 function toggleDisc(discId,headId){ buzz(); const open=$(discId).classList.toggle('open'); $(headId).setAttribute('aria-expanded',open); return open; }
 $('payHead').onclick = ()=>{ if(toggleDisc('discPay','payHead')) renderPay(); };
 $('specHead').onclick = ()=>{ toggleDisc('discSpec','specHead'); };
+
+/* analytics: intenção de compra (CTA) e contato geral pela vitrine */
+$('cta').addEventListener('click', ()=>{ if(prod&&S) track('cta_whatsapp', { produto: prod.id, gb: S.gb, cor: S.cor, cond: S.cond }); });
+$('waCat').addEventListener('click', ()=>track('contato_vitrine'));
 
 /* ============ confiabilidade ============ */
 /* foto que não carrega vira um aparelho neutro em vez de imagem quebrada */
