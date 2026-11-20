@@ -24,6 +24,25 @@ No ar (Vercel/HTTPS) funciona normalmente, sem nenhum passo extra.
 
 Produto com **todas** as variantes zeradas some da vitrine automaticamente (e link direto para ele volta para a vitrine) — para "pausar" um aparelho, basta zerar o estoque.
 
+### Fotos dos produtos
+A pasta `img/` é a fonte da verdade das fotos. Em vez de editar o `loja.json` na mão, basta nomear os arquivos e rodar um script.
+
+Convenção de nome: **`<id-do-produto>-<cor>-<n>.webp`**
+- `<id>`: o `id` do produto (ex.: `galaxy-s24`)
+- `<cor>`: o nome da cor em minúsculas, sem acento, com espaços virando `-` (ex.: "Preto Ônix" → `preto-onix`)
+- `<n>`: a ordem (1 = foto de capa)
+
+Exemplo: `img/galaxy-s24-preto-onix-1.webp`, `...-2.webp`, `img/galaxy-s24-amarelo-ambar-1.webp`
+
+Depois de colocar os arquivos, rode na raiz do projeto:
+```
+node tools/fotos.js          # atualiza o loja.json
+node tools/fotos.js --dry    # só mostra o que faria, sem gravar
+```
+O script casa cada arquivo com o produto/cor, reescreve os campos `fotos` em ordem e avisa sobre nomes que não batem. Tirar os arquivos de uma cor remove as fotos dela (ela volta ao aparelho desenhado). Cor sem foto continua usando o desenho neutro — dá para ter só alguns modelos com foto.
+
+Recomendações de imagem: exporte em **webp**, ~1000–1400 px no maior lado, abaixo de ~500 KB (o script avisa se passar), e use fundo claro e consistente entre as fotos. Para seminovos, fotografe o aparelho **real** — é o que o cliente quer ver.
+
 ## Simulador de pagamento
 Na tela do aparelho, o cliente pode informar uma **entrada** (Pix/dinheiro), digitando o valor ou tocando nos atalhos de 10%, 20%, 30% ou 50%. O restante vai para o cartão, e o resumo mostra:
 - restante no cartão

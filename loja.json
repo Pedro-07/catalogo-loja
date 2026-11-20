@@ -167,45 +167,45 @@
           "nome": "Azul",
           "hex": "#D4E1EA",
           "fotos": [
-            "img/iphone15-azul-1.webp",
-            "img/iphone15-azul-2.webp",
-            "img/iphone15-azul-3.webp"
+            "img/iphone-15-azul-1.webp",
+            "img/iphone-15-azul-2.webp",
+            "img/iphone-15-azul-3.webp"
           ]
         },
         {
           "nome": "Preto",
           "hex": "#3A3A3C",
           "fotos": [
-            "img/iphone15-preto-1.webp",
-            "img/iphone15-preto-2.webp",
-            "img/iphone15-preto-3.webp"
+            "img/iphone-15-preto-1.webp",
+            "img/iphone-15-preto-2.webp",
+            "img/iphone-15-preto-3.webp"
           ]
         },
         {
           "nome": "Verde",
           "hex": "#DDE8D8",
           "fotos": [
-            "img/iphone15-verde-1.webp",
-            "img/iphone15-verde-2.webp",
-            "img/iphone15-verde-3.webp"
+            "img/iphone-15-verde-1.webp",
+            "img/iphone-15-verde-2.webp",
+            "img/iphone-15-verde-3.webp"
           ]
         },
         {
           "nome": "Rosa",
           "hex": "#F6D6D9",
           "fotos": [
-            "img/iphone15-rosa-1.webp",
-            "img/iphone15-rosa-2.webp",
-            "img/iphone15-rosa-3.webp"
+            "img/iphone-15-rosa-1.webp",
+            "img/iphone-15-rosa-2.webp",
+            "img/iphone-15-rosa-3.webp"
           ]
         },
         {
           "nome": "Amarelo",
           "hex": "#F3EBC6",
           "fotos": [
-            "img/iphone15-amarelo-1.webp",
-            "img/iphone15-amarelo-2.webp",
-            "img/iphone15-amarelo-3.webp"
+            "img/iphone-15-amarelo-1.webp",
+            "img/iphone-15-amarelo-2.webp",
+            "img/iphone-15-amarelo-3.webp"
           ]
         }
       ],
