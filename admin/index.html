@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0B0F">
+<meta name="robots" content="noindex">
+<title>Painel · Catálogo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0B0F; --surface:#16161D; --surface2:#1F1F29;
+  --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.16);
+  --text:#F5F5F7; --muted:#A1A1AA; --accent:#8B5CF6; --ok:#4ADE80;
+  --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+body{min-height:100dvh;font-size:15px;line-height:1.45;overflow-x:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit}
+.app{width:100%;max-width:480px;margin:0 auto;min-height:100dvh;position:relative}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform .12s ease}.press:active{transform:scale(.98)}
+.hide{display:none!important}
+
+/* ---------- LOGIN ---------- */
+.login{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;padding:24px;gap:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:14px;background:var(--accent);display:grid;place-items:center;font-weight:700;font-size:17px;box-shadow:0 8px 24px -8px var(--accent)}
+.brand h1{font-size:18px;font-weight:600}.brand p{font-size:13px;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px}
+.card h2{font-size:17px;font-weight:600;margin-bottom:4px}
+.card .sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.field input{width:100%;height:50px;padding:0 14px;border-radius:12px;background:var(--bg);border:1px solid var(--line2);color:var(--text);font-size:16px;outline:0;transition:border-color .2s}
+.field input:focus{border-color:var(--text)}
+.btn{width:100%;height:50px;border-radius:12px;background:#fff;color:#0B0B0F;font-weight:600;font-size:15px;margin-top:6px}
+.btn.ghost{background:var(--surface2);color:var(--text);border:1px solid var(--line2)}
+.note{font-size:12px;color:var(--muted);text-align:center;margin-top:14px}
+.proto{display:inline-block;margin-top:10px;font-size:11px;font-weight:600;color:#FDBA74;border:1px solid rgba(253,186,116,.35);background:rgba(253,186,116,.08);padding:4px 10px;border-radius:999px}
+
+/* ---------- PAINEL ---------- */
+.top{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(14px + var(--safe-t)) 18px 12px;background:rgba(11,11,15,.82);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.top .who{min-width:0}
+.top .who b{font-size:15px;font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .who span{font-size:12px;color:var(--muted)}
+.top .acts{display:flex;gap:8px;flex:0 0 auto}
+.pill{height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:var(--surface);font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px}
+.wrap{padding:16px 16px calc(96px + var(--safe-b))}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:var(--surface);font-size:13px;font-weight:500;color:var(--muted)}
+.tab.on{background:var(--text);color:#0B0B0F;border-color:var(--text)}
+
+.prod{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+.prod .h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.prod .h b{font-size:15px;font-weight:600}
+.prod .h .mk{font-size:11px;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:3px 8px}
+.prod .h .st{margin-left:auto;font-size:12px;color:var(--muted)}
+.var{padding:12px 0;border-top:1px solid var(--line)}
+.var .lbl{font-size:13px;margin-bottom:9px}
+.var .lbl small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.var .fields{display:flex;gap:10px}
+.var .box{display:flex;flex-direction:column;gap:3px}
+.var .box span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.var .box input{width:96px;height:40px;padding:0 10px;border-radius:10px;background:var(--bg);border:1px solid var(--line2);color:var(--text);font-size:15px;outline:0;text-align:right}
+.var .box.qtd input{width:64px;text-align:center}
+.var .box input:focus{border-color:var(--text)}
+
+.savebar{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:480px;z-index:20;padding:12px 16px calc(12px + var(--safe-b));background:rgba(11,11,15,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.savebar .btn{margin:0}
+.savebar .btn:disabled{opacity:.5}
+.savebar .hint{font-size:11px;color:#FDBA74;text-align:center;margin-top:8px}
+.skel{color:var(--muted);text-align:center;padding:40px 0;font-size:14px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- LOGIN -->
+  <section id="vLogin" class="login">
+    <div class="brand">
+      <div class="logo" id="logo">PC</div>
+      <div><h1 id="lojaNome">Painel da loja</h1><p>Gestão do catálogo</p></div>
+    </div>
+    <div class="card">
+      <h2>Entrar</h2>
+      <p class="sub">Acesse para editar estoque, preços e fotos.</p>
+      <div class="field"><label for="email">E-mail</label><input id="email" type="email" inputmode="email" autocomplete="username" placeholder="voce@loja.com"></div>
+      <div class="field"><label for="senha">Senha</label><input id="senha" type="password" autocomplete="current-password" placeholder="••••••••"></div>
+      <button class="btn press" id="entrar">Entrar</button>
+      <p class="note">Esqueceu a senha? Fale com o suporte.<br><span class="proto">Protótipo · login real conecta ao Supabase</span></p>
+    </div>
+  </section>
+
+  <!-- PAINEL -->
+  <section id="vPainel" class="hide">
+    <header class="top">
+      <div class="who"><b id="pNome">Loja</b><span>Painel do catálogo</span></div>
+      <div class="acts">
+        <a class="pill press" id="verCat" target="_blank" rel="noopener">Ver catálogo</a>
+        <button class="pill press" id="sair">Sair</button>
+      </div>
+    </header>
+    <div class="wrap">
+      <div class="tabs">
+        <button class="tab on">Produtos</button>
+        <button class="tab">Loja</button>
+        <button class="tab">Pagamento</button>
+      </div>
+      <div id="lista"><div class="skel">Carregando produtos…</div></div>
+    </div>
+    <div class="savebar">
+      <button class="btn press" id="salvar" disabled>Salvar alterações</button>
+      <p class="hint" id="saveHint">Edição ligada ao banco na próxima etapa (Supabase).</p>
+    </div>
+  </section>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const BRL = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const estqTotal = v => typeof v.estoque==='object' ? Object.values(v.estoque).reduce((s,x)=>s+x,0) : (v.estoque||0);
+
+let LOJA = null;
+
+/* login (protótipo) — a autenticação real passa pelo Supabase na próxima etapa */
+$('entrar').onclick = ()=>{ abrirPainel(); };
+$('senha').addEventListener('keydown', e=>{ if(e.key==='Enter') abrirPainel(); });
+$('sair').onclick = ()=>{ $('vPainel').classList.add('hide'); $('vLogin').classList.remove('hide'); window.scrollTo(0,0); };
+
+function abrirPainel(){
+  $('vLogin').classList.add('hide'); $('vPainel').classList.remove('hide'); window.scrollTo(0,0);
+  if(!LOJA) carregar();
+}
+
+function carregar(){
+  fetch('../loja.json')
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(d=>{ LOJA=d; pintar(); })
+    .catch(()=>{ $('lista').innerHTML = '<div class="skel">Não foi possível carregar os produtos.</div>'; });
+}
+
+function pintar(){
+  const L = LOJA.loja||{};
+  $('logo').textContent = L.sigla||'·';
+  $('lojaNome').textContent = L.nome||'Painel da loja';
+  $('pNome').textContent = L.nome||'Loja';
+  $('verCat').href = '../';
+
+  $('lista').innerHTML = (LOJA.produtos||[]).map(p=>{
+    const est = (p.variantes||[]).reduce((s,v)=>s+estqTotal(v),0);
+    const vars = (p.variantes||[]).map(v=>`
+      <div class="var">
+        <div class="lbl">${v.gb} GB · ${v.condicao==='novo'?'Novo':'Seminovo'}
+          <small>${(v.cores||[]).map(esc).join(' · ')}</small></div>
+        <div class="fields">
+          <div class="box"><span>Preço Pix</span><input class="num" inputmode="numeric" value="${v.preco_pix}" aria-label="Preço ${v.gb}GB"></div>
+          <div class="box qtd"><span>Estoque</span><input class="num" inputmode="numeric" value="${estqTotal(v)}" aria-label="Estoque ${v.gb}GB"></div>
+        </div>
+      </div>`).join('');
+    return `<div class="prod">
+      <div class="h"><b>${esc(p.modelo)}</b><span class="mk">${esc(p.marca)}</span><span class="st">${est} em estoque</span></div>
+      ${vars}
+    </div>`;
+  }).join('');
+
+  // qualquer edição "arma" o botão salvar (visual, por enquanto)
+  $('lista').querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>{
+    $('salvar').disabled=false; $('saveHint').textContent='Pré-visualização — a gravação entra com o Supabase conectado.';
+  }));
+}
+</script>
+</body>
+</html>
