@@ -255,7 +255,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
       <div class="chips noscroll" id="chips"></div>
     </nav>
 
-    <main class="grid" id="grid"></main>
+    <main class="grid" id="grid"><div class="empty">Carregando catálogo…</div></main>
 
     <footer class="foot">
       <a class="addr press" id="addrLink" target="_blank" rel="noopener">
@@ -366,91 +366,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 </div>
 
 <script>
-/* =========================================================
-   DADOS DA LOJA — troque este objeto (equivale ao loja.json)
-   ========================================================= */
-const LOJA = {
-  loja: {
-    nome: "Prime Cell",
-    sigla: "PC",
-    bairro: "Calhau · São Luís",
-    whatsapp: "5598984865648",
-    endereco: "Av. dos Holandeses, Calhau – São Luís/MA",
-    horario: "Seg a sáb · 9h às 19h",
-    cor_destaque: "#8B5CF6",
-    garantia_novo: "1 ano de garantia de fábrica",
-    garantia_seminovo: "90 dias de garantia da loja",
-    obs_novo: "Com nota fiscal · retire na loja ou receba em casa",
-    obs_seminovo: "Retire na loja ou receba em casa"
-  },
-  pagamento: {
-    repassa_juros: true,
-    mostrar_taxa: true,
-    parcelas_sem_juros: 1,
-    max_parcelas: 12,
-    taxas: {1:3.2,2:4.6,3:5.4,4:6.2,5:7.0,6:7.8,7:8.6,8:9.3,9:10.0,10:10.7,11:11.4,12:12.0}
-  },
-  produtos: [
-    { id:"iphone-16", marca:"Apple", modelo:"iPhone 16", cam:"apple-v",
-      specs:{tela:'6,1" Super Retina XDR',chip:"A18",camera:"48 MP Fusion",bateria:"Até 22h de vídeo"},
-      cores:[{nome:"Ultramarino",hex:"#6F7FD6"},{nome:"Verde-acinzentado",hex:"#B0C9C4"},{nome:"Rosa",hex:"#F2BFD5"},{nome:"Branco",hex:"#F2F2EE"},{nome:"Preto",hex:"#2E2E30"}],
-      variantes:[
-        {gb:128,condicao:"novo",preco_pix:5999,cores:["Ultramarino","Verde-acinzentado","Rosa","Branco","Preto"],estoque:4},
-        {gb:256,condicao:"novo",preco_pix:6799,cores:["Ultramarino","Preto"],estoque:2}
-      ]},
-    { id:"iphone-15-pro", marca:"Apple", modelo:"iPhone 15 Pro", cam:"apple-pro",
-      specs:{tela:'6,1" ProMotion 120 Hz',chip:"A17 Pro",camera:"48 MP + tele 3x",bateria:"Até 23h de vídeo"},
-      cores:[{nome:"Titânio Natural",hex:"#BEB7AC"},{nome:"Titânio Azul",hex:"#3F4757"},{nome:"Titânio Preto",hex:"#3B3B3D"},{nome:"Titânio Branco",hex:"#E9E7E2"}],
-      variantes:[
-        {gb:128,condicao:"seminovo",preco_pix:5299,bateria:93,estado:"Impecável",cores:["Titânio Natural","Titânio Preto"],estoque:2},
-        {gb:256,condicao:"seminovo",preco_pix:5799,bateria:96,estado:"Impecável",cores:["Titânio Azul","Titânio Branco"],estoque:{"Titânio Azul":1,"Titânio Branco":1}}
-      ]},
-    { id:"iphone-15", marca:"Apple", modelo:"iPhone 15", cam:"apple-d",
-      specs:{tela:'6,1" Super Retina XDR',chip:"A16 Bionic",camera:"48 MP",bateria:"Até 20h de vídeo"},
-      cores:[{nome:"Azul",hex:"#D4E1EA",fotos:["img/iphone15-azul-1.webp","img/iphone15-azul-2.webp","img/iphone15-azul-3.webp"]},{nome:"Preto",hex:"#3A3A3C",fotos:["img/iphone15-preto-1.webp","img/iphone15-preto-2.webp","img/iphone15-preto-3.webp"]},{nome:"Verde",hex:"#DDE8D8",fotos:["img/iphone15-verde-1.webp","img/iphone15-verde-2.webp","img/iphone15-verde-3.webp"]},{nome:"Rosa",hex:"#F6D6D9",fotos:["img/iphone15-rosa-1.webp","img/iphone15-rosa-2.webp","img/iphone15-rosa-3.webp"]},{nome:"Amarelo",hex:"#F3EBC6",fotos:["img/iphone15-amarelo-1.webp","img/iphone15-amarelo-2.webp","img/iphone15-amarelo-3.webp"]}],
-      variantes:[
-        {gb:128,condicao:"novo",preco_pix:4799,cores:["Azul","Preto","Verde","Rosa"],estoque:3},
-        {gb:256,condicao:"novo",preco_pix:5499,cores:["Preto","Azul"],estoque:2},
-        {gb:128,condicao:"seminovo",preco_pix:3999,bateria:91,estado:"Excelente",cores:["Azul","Amarelo"],estoque:1}
-      ]},
-    { id:"iphone-14", marca:"Apple", modelo:"iPhone 14", cam:"apple-d",
-      specs:{tela:'6,1" Super Retina XDR',chip:"A15 Bionic",camera:"12 MP dupla",bateria:"Até 20h de vídeo"},
-      cores:[{nome:"Meia-noite",hex:"#232A31"},{nome:"Estelar",hex:"#F2EBE3"},{nome:"Roxo",hex:"#D6CDE0"},{nome:"Azul",hex:"#A7C1D9"}],
-      variantes:[
-        {gb:128,condicao:"novo",preco_pix:3899,cores:["Meia-noite","Estelar"],estoque:2},
-        {gb:128,condicao:"seminovo",preco_pix:3199,bateria:89,estado:"Excelente",cores:["Roxo","Meia-noite","Azul"],estoque:3},
-        {gb:256,condicao:"seminovo",preco_pix:3599,bateria:92,estado:"Impecável",cores:["Azul"],estoque:1}
-      ]},
-    { id:"iphone-13", marca:"Apple", modelo:"iPhone 13", cam:"apple-d",
-      specs:{tela:'6,1" Super Retina XDR',chip:"A15 Bionic",camera:"12 MP dupla",bateria:"Até 19h de vídeo"},
-      cores:[{nome:"Meia-noite",hex:"#1F2329"},{nome:"Estelar",hex:"#F2EBE3"},{nome:"Azul",hex:"#3E5E7E"},{nome:"Rosa",hex:"#F5D8D5"}],
-      variantes:[
-        {gb:128,condicao:"seminovo",preco_pix:2599,bateria:87,estado:"Muito bom",cores:["Meia-noite","Azul","Estelar","Rosa"],estoque:5},
-        {gb:256,condicao:"seminovo",preco_pix:2899,bateria:90,estado:"Excelente",cores:["Meia-noite"],estoque:1}
-      ]},
-    { id:"galaxy-s24", marca:"Samsung", modelo:"Galaxy S24", cam:"samsung",
-      specs:{tela:'6,2" AMOLED 120 Hz',chip:"Exynos 2400",camera:"50 MP tripla",bateria:"4.000 mAh"},
-      cores:[{nome:"Preto Ônix",hex:"#2B2C30"},{nome:"Cinza Mármore",hex:"#C9C9C7"},{nome:"Violeta Cobalto",hex:"#B5A9D3"},{nome:"Amarelo Âmbar",hex:"#EFE2B0"}],
-      variantes:[
-        {gb:128,condicao:"novo",preco_pix:3999,cores:["Preto Ônix","Cinza Mármore","Violeta Cobalto"],estoque:5},
-        {gb:256,condicao:"novo",preco_pix:4399,cores:["Preto Ônix","Amarelo Âmbar"],estoque:2},
-        {gb:256,condicao:"seminovo",preco_pix:3299,bateria:95,estado:"Impecável",cores:["Violeta Cobalto"],estoque:1}
-      ]},
-    { id:"galaxy-a55", marca:"Samsung", modelo:"Galaxy A55 5G", cam:"samsung",
-      specs:{tela:'6,6" Super AMOLED',chip:"Exynos 1480",camera:"50 MP tripla",bateria:"5.000 mAh"},
-      cores:[{nome:"Azul Escuro",hex:"#2D3A5A"},{nome:"Azul Claro",hex:"#BFD3E6"},{nome:"Lilás",hex:"#CBBEE2"}],
-      variantes:[
-        {gb:128,condicao:"novo",preco_pix:1999,cores:["Azul Escuro","Azul Claro","Lilás"],estoque:6},
-        {gb:256,condicao:"novo",preco_pix:2299,cores:["Azul Escuro","Lilás"],estoque:3}
-      ]},
-    { id:"redmi-note-13", marca:"Xiaomi", modelo:"Redmi Note 13", cam:"xiaomi",
-      specs:{tela:'6,67" AMOLED 120 Hz',chip:"Snapdragon 685",camera:"108 MP",bateria:"5.000 mAh"},
-      cores:[{nome:"Preto",hex:"#232326"},{nome:"Verde Menta",hex:"#BFE3D2"},{nome:"Azul Gelo",hex:"#C9DCEC"}],
-      variantes:[
-        {gb:256,condicao:"novo",preco_pix:1499,cores:["Preto","Verde Menta","Azul Gelo"],estoque:6}
-      ]}
-  ]
-};
+/* Dados da loja: carregados de loja.json em boot() (ver fim do script). */
+let LOJA = null;
 
 /* ================= utilidades ================= */
 const $ = id => document.getElementById(id);
@@ -459,7 +376,7 @@ const BRL0 = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maxi
 const money = v => BRL.format(v);
 const money0 = v => Number.isInteger(v) ? BRL0.format(v) : BRL.format(v);
 const round2 = v => Math.round(v*100)/100;
-const P = LOJA.pagamento;
+let P = null;  // = LOJA.pagamento após o fetch (ver boot())
 
 function totalCartao(pix,n){
   if(!P.repassa_juros || n <= P.parcelas_sem_juros) return pix;
@@ -534,7 +451,7 @@ const F = { marca:'Todas', cond:null, q:'' };
 /* busca: ignora acento e maiúscula; todas as palavras precisam bater */
 const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const waNum = () => String(LOJA.loja.whatsapp||'').replace(/\D/g,'');
+const waNum = () => String((LOJA&&LOJA.loja&&LOJA.loja.whatsapp)||'').replace(/\D/g,'');
 /* cor sempre vira um token hex válido antes de entrar em SVG/estilo (nunca HTML cru) */
 const safeHex = h => /^#[0-9a-fA-F]{3,8}$/.test(String(h)) ? String(h) : '#3A3A3C';
 function textoBusca(p){
@@ -933,7 +850,7 @@ function route(){
 window.addEventListener('hashchange',route);
 
 /* ================= init ================= */
-(function init(){
+function init(){
   try{
     validarLoja();
     const L=LOJA.loja;
@@ -944,7 +861,16 @@ window.addEventListener('hashchange',route);
     $('addrLink').href=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(L.endereco||'')}`;
     renderChips(); renderGrid(); route();
   }catch(err){ console.error('init', err); telaErro(); }
-})();
+}
+
+/* ========== carrega os dados da loja (loja.json) e inicializa ========== */
+function boot(){
+  fetch('loja.json')
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(data=>{ LOJA=data; P=LOJA.pagamento; init(); })
+    .catch(err=>{ console.error('Falha ao carregar loja.json', err); telaErro(); });
+}
+boot();
 </script>
 </body>
 </html>

@@ -3,10 +3,19 @@
 Catálogo mobile em que o cliente escolhe cor, armazenamento, condição e parcelamento de um aparelho, simula o pagamento com entrada e envia a escolha pronta para o WhatsApp da loja.
 
 ## Como editar
-Todos os dados ficam no objeto `LOJA`, no início do `<script>` em `index.html`:
+Todos os dados ficam no arquivo **`loja.json`** (separado do código). O `index.html` carrega esse arquivo ao abrir. Estrutura:
 - `loja`: nome, WhatsApp (só números, com 55 + DDD), endereço, cor de destaque, textos de garantia (`garantia_novo`, `garantia_seminovo`) e o texto que aparece embaixo da garantia (`obs_novo`, `obs_seminovo`)
 - `pagamento`: taxas da maquininha por parcela (em %), parcelas sem juros, máximo de parcelas, e `mostrar_taxa` (`true`/`false`): com `false`, o resumo do cartão mostra só as parcelas e o total, sem discriminar restante/acréscimo/total no cartão
 - `produtos`: modelos, cores (com `fotos` opcionais em `img/`) e variantes (GB, condição, preço no Pix, estoque)
+
+Por ser JSON, use aspas duplas em chaves e textos, e **não** deixe vírgula sobrando no último item. Um validador avisa no console do navegador se algo estiver inconsistente (ver seção Segurança).
+
+### Preview local
+Como `loja.json` é carregado via `fetch`, abrir o `index.html` com dois cliques (`file://`) **não funciona** — o navegador bloqueia o fetch. Para testar na sua máquina, sirva a pasta por HTTP, por exemplo:
+- `python -m http.server` e abra `http://localhost:8000`
+- ou `npx serve`
+
+No ar (Vercel/HTTPS) funciona normalmente, sem nenhum passo extra.
 
 ### Estoque
 `estoque` pode ser:
