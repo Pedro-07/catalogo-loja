@@ -29,6 +29,12 @@ Fórmula da taxa repassada: `total no cartão = restante ÷ (1 − taxa%)`, para
 ## Pré-visualização do link (WhatsApp/Instagram)
 As tags `og:url` e `og:image` no `<head>` apontam para o domínio do deploy. Ao instalar o catálogo para outra loja, troque o domínio nessas duas tags pelo endereço real do novo site.
 
+## Segurança e confiabilidade
+- `vercel.json` define cabeçalhos de segurança (CSP, `X-Content-Type-Options`, `Referrer-Policy`, anti-clickjacking, `Permissions-Policy`, HSTS) e cache longo para `/img`. Ao usar recursos externos novos, ajuste a CSP.
+- Todo dado de texto é escapado ao virar HTML e as cores passam por um sanitizador de hex — seguro mesmo que os dados venham de uma planilha editável.
+- Foto que não carrega vira um aparelho neutro (sem imagem quebrada); erro ao carregar não deixa tela branca, cai num estado com link de WhatsApp.
+- Ao abrir o catálogo, um validador avisa **no console do navegador** sobre dados inconsistentes (id duplicado, cor inexistente, taxa faltando, hex inválido, seminovo sem bateria/estado). Útil ao editar a loja.
+
 ## Deploy na Vercel
 1. Importe este repositório em vercel.com → **Add New → Project**
 2. Framework: **Other**. Sem build command, output = raiz

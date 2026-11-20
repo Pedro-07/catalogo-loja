@@ -498,6 +498,7 @@ function camera(style,c){
   }
 }
 function phoneSVG(prod,c,view){
+  c = safeHex(c);
   const id = 'g'+(++gid);
   const edge = lum(c) < .3 ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.35)';
   if(view === 'frente'){
@@ -533,6 +534,9 @@ const F = { marca:'Todas', cond:null, q:'' };
 /* busca: ignora acento e maiúscula; todas as palavras precisam bater */
 const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const waNum = () => String(LOJA.loja.whatsapp||'').replace(/\D/g,'');
+/* cor sempre vira um token hex válido antes de entrar em SVG/estilo (nunca HTML cru) */
+const safeHex = h => /^#[0-9a-fA-F]{3,8}$/.test(String(h)) ? String(h) : '#3A3A3C';
 function textoBusca(p){
   const partes = [p.marca, p.modelo, ...p.cores.map(c=>c.nome)];
   p.variantes.forEach(v=>partes.push(v.gb+'gb', v.gb+' gb', v.condicao));
@@ -543,7 +547,7 @@ function renderChips(){
   const marcas = ['Todas', ...new Set(LOJA.produtos.map(p=>p.marca))];
   const conds = [['novo','Novos'],['seminovo','Seminovos']];
   $('chips').innerHTML =
-    marcas.map(m=>`<button class="chip press ${F.marca===m?'on':''}" data-m="${m}">${m}</button>`).join('') +
+    marcas.map(m=>`<button class="chip press ${F.marca===m?'on':''}" data-m="${esc(m)}">${esc(m)}</button>`).join('') +
     `<span class="sep"></span>` +
     conds.map(([k,l])=>`<button class="chip press ${F.cond===k?'on':''}" data-c="${k}">${l}</button>`).join('');
   $('chips').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{F.marca=b.dataset.m;buzz();renderChips();renderGrid()});
@@ -564,14 +568,14 @@ function renderGrid(){
     const conds = [...new Set(vs.map(v=>v.condicao))];
     const est = vs.reduce((s,v)=>s+estqTotal(v),0);
     const fc = p.cores.find(k=>k.fotos&&k.fotos.length);
-    const c = (fc||p.cores[0]).hex;
-    const pic = fc ? `<img src="${fc.fotos[0]}" alt="${p.modelo}" loading="lazy">` : phoneSVG(p,c,'traseira');
+    const c = safeHex((fc||p.cores[0]).hex);
+    const pic = fc ? `<img src="${esc(fc.fotos[0])}" alt="${esc(p.modelo)}" loading="lazy">` : phoneSVG(p,c,'traseira');
     const flag = est>0 && est<=2 ? `<span class="flag hot">Últimas unidades</span>`
                : conds.length===1 && conds[0]==='seminovo' ? `<span class="flag">Seminovo</span>` : '';
-    return `<button class="card press" style="animation-delay:${i*45}ms" data-id="${p.id}">
+    return `<button class="card press" style="animation-delay:${i*45}ms" data-id="${esc(p.id)}">
       <div class="thumb">${pic}${flag}</div>
-      <div class="dotsrow">${p.cores.slice(0,6).map(k=>`<i style="background:${k.hex}"></i>`).join('')}</div>
-      <h3>${p.modelo}</h3>
+      <div class="dotsrow">${p.cores.slice(0,6).map(k=>`<i style="background:${safeHex(k.hex)}"></i>`).join('')}</div>
+      <h3>${esc(p.modelo)}</h3>
       <p class="cond">${conds.map(x=>x==='novo'?'Novo':'Seminovo').join(' · ')} · ${[...new Set(vs.map(v=>v.gb))].sort((a,b)=>a-b).map(g=>g+'GB').join(', ')}</p>
       <p class="from">a partir de</p>
       <p class="price num">${money0(min)}</p>
@@ -667,7 +671,7 @@ function renderGallery(fade=true){
   const fotos = (corObj.fotos||[]);
   const build = () => {
     const slides = fotos.length
-      ? fotos.map(src=>`<div class="slide"><img src="${src}" alt="${prod.modelo} ${S.cor}" loading="lazy"></div>`)
+      ? fotos.map(src=>`<div class="slide"><img src="${esc(src)}" alt="${esc(prod.modelo+' '+S.cor)}" loading="lazy"></div>`)
       : [['traseira','Traseira'],['frente','Frente']].map(([v])=>`<div class="slide"><div class="float" style="height:100%;display:flex;align-items:center">${phoneSVG(prod,c,v)}</div></div>`);
     g.innerHTML = slides.join('');
     g.querySelectorAll('.slide img').forEach(im=>im.onclick=()=>openLB(im.src,im.alt));
@@ -706,7 +710,7 @@ function renderAll(){
 
   // tags (estoque da cor escolhida)
   const tags=[], q=estq(v,S.cor);
-  tags.push(v.condicao==='novo'?`<span class="tag ok">Novo · lacrado</span>`:`<span class="tag">Seminovo · ${v.estado}</span>`);
+  tags.push(v.condicao==='novo'?`<span class="tag ok">Novo · lacrado</span>`:`<span class="tag">Seminovo · ${esc(v.estado)}</span>`);
   if(v.condicao==='seminovo') tags.push(`<span class="tag">🔋 ${v.bateria}%</span>`);
   if(q===1) tags.push(`<span class="tag hot">Só 1 unidade</span>`);
   else if(q===2) tags.push(`<span class="tag hot">Últimas 2 unidades</span>`);
@@ -714,7 +718,7 @@ function renderAll(){
 
   // cores
   $('corNome').textContent = S.cor;
-  $('sw').innerHTML = prod.cores.map(c=>`<button class="sw press ${c.nome===S.cor?'on':''} ${avail('cor',c.nome)?'':'off'}" data-v="${c.nome}" aria-label="${c.nome}"><span style="background:${c.hex}"></span></button>`).join('');
+  $('sw').innerHTML = prod.cores.map(c=>`<button class="sw press ${c.nome===S.cor?'on':''} ${avail('cor',c.nome)?'':'off'}" data-v="${esc(c.nome)}" aria-label="${esc(c.nome)}"><span style="background:${safeHex(c.hex)}"></span></button>`).join('');
   $('sw').querySelectorAll('.sw').forEach(b=>b.onclick=()=>{ if(b.dataset.v===S.cor) return; buzz(); pickNotify('cor',b.dataset.v); renderGallery(); renderAll(); });
 
   // armazenamento
@@ -737,13 +741,13 @@ function renderAll(){
   $('semi').innerHTML = v.condicao==='seminovo' ? `<div class="semi">
       <div class="row"><span>Saúde da bateria</span><b>${v.bateria}%</b></div>
       <div class="bar"><i style="width:${v.bateria}%"></i></div>
-      <div class="row"><span>Estado do aparelho</span><b>${v.estado}</b></div>
+      <div class="row"><span>Estado do aparelho</span><b>${esc(v.estado)}</b></div>
     </div>` : '';
 
   // garantia
   const novo = v.condicao==='novo';
   $('warr').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
-    <div><b>${novo?LOJA.loja.garantia_novo:LOJA.loja.garantia_seminovo}</b>${novo?LOJA.loja.obs_novo:LOJA.loja.obs_seminovo}</div>`;
+    <div><b>${esc(novo?LOJA.loja.garantia_novo:LOJA.loja.garantia_seminovo)}</b>${esc(novo?LOJA.loja.obs_novo:LOJA.loja.obs_seminovo)}</div>`;
 
   renderPay();
 }
@@ -820,7 +824,7 @@ function renderPay(){
     pag += ` (total ${money(c.total)})`;
   }
   const msg = `Olá! Vi no catálogo e tenho interesse:\n📱 *${prod.modelo} – ${v.gb}GB – ${S.cor}*\nCondição: ${cond}\n${pag}\nAinda está disponível?`;
-  $('cta').href = `https://wa.me/${LOJA.loja.whatsapp}?text=${encodeURIComponent(msg)}`;
+  $('cta').href = `https://wa.me/${waNum()}?text=${encodeURIComponent(msg)}`;
   $('ctaP').textContent = !comCartao ? `· ${money0(pix)}`
     : c.ent>0 ? `· ${money0(c.ent)} + ${c.n}x ${money(c.par)}`
               : `· ${money0(pix)} ou ${c.n}x ${money(c.par)}`;
@@ -847,7 +851,7 @@ function renderSpecs(){
     bateria:'<rect x="2.5" y="7" width="17" height="10" rx="2.5"/><path d="M22 10.5v3"/><path d="M6 10v4M9.5 10v4M13 10v4"/>'
   };
   const L = {tela:'Tela',chip:'Processador',camera:'Câmera',bateria:'Bateria'};
-  $('specs').innerHTML = Object.keys(L).map(k=>`<div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${I[k]}</svg><span>${L[k]}</span><b>${prod.specs[k]}</b></div>`).join('');
+  $('specs').innerHTML = Object.keys(L).map(k=>`<div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${I[k]}</svg><span>${L[k]}</span><b>${esc(prod.specs[k])}</b></div>`).join('');
 }
 
 /* inclinação 3D com giroscópio (quando o navegador permitir) */
@@ -870,25 +874,76 @@ function toggleDisc(discId,headId){ buzz(); const open=$(discId).classList.toggl
 $('payHead').onclick = ()=>{ if(toggleDisc('discPay','payHead')) renderPay(); };
 $('specHead').onclick = ()=>{ toggleDisc('discSpec','specHead'); };
 
+/* ============ confiabilidade ============ */
+/* foto que não carrega vira um aparelho neutro em vez de imagem quebrada */
+function phonePH(){ return '<svg class="phfb" viewBox="0 0 200 400" aria-hidden="true"><rect x="46" y="18" width="108" height="364" rx="26" fill="#15151c" stroke="rgba(255,255,255,.12)" stroke-width="2"/><rect x="58" y="40" width="84" height="300" rx="10" fill="#0d0d12"/><circle cx="100" cy="300" r="22" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="3"/></svg>'; }
+window.addEventListener('error', e=>{
+  const t=e.target;
+  if(t && t.tagName==='IMG' && t.closest && (t.closest('.thumb')||t.closest('.slide'))){
+    const box=document.createElement('span'); box.innerHTML=phonePH();
+    const svg=box.firstElementChild; if(svg) t.replaceWith(svg);
+  }
+}, true);
+
+/* estado amigável se algo impedir o catálogo de carregar (nunca tela branca) */
+function telaErro(){
+  const wa=waNum();
+  const app=document.querySelector('.app'); if(!app) return;
+  app.innerHTML = `<div style="padding:48px 24px;text-align:center;color:var(--muted)">
+    <p style="font-size:16px;color:var(--text);margin-bottom:6px">Não foi possível carregar o catálogo</p>
+    <p style="font-size:14px">Tente recarregar a página.</p>
+    ${wa?`<a href="https://wa.me/${wa}" style="display:inline-block;margin-top:18px;color:var(--text)">Falar no WhatsApp ›</a>`:''}
+  </div>`;
+}
+
+/* validação de dados: só avisa no console, nunca quebra o app (ajuda quem edita a loja) */
+function validarLoja(){
+  try{
+    const L=LOJA.loja||{}, PG=LOJA.pagamento||{}, prods=LOJA.produtos||[];
+    const warn=m=>console.warn('[catálogo] '+m);
+    ['nome','whatsapp','endereco'].forEach(k=>{ if(!L[k]) warn(`loja.${k} ausente`); });
+    if(!/^\d{12,13}$/.test(waNum())) warn('loja.whatsapp deve ter DDI+DDD+número (ex.: 5598987654321)');
+    const ids=new Set();
+    prods.forEach(p=>{
+      if(ids.has(p.id)) warn(`id duplicado: ${p.id}`); ids.add(p.id);
+      if(!p.cores||!p.cores.length) warn(`${p.id}: sem cores`);
+      if(!p.variantes||!p.variantes.length) warn(`${p.id}: sem variantes`);
+      const nomes=new Set((p.cores||[]).map(c=>c.nome));
+      (p.cores||[]).forEach(c=>{ if(!/^#[0-9a-fA-F]{3,8}$/.test(String(c.hex||''))) warn(`${p.id}/${c.nome}: hex inválido (${c.hex})`); });
+      (p.variantes||[]).forEach(v=>{
+        (v.cores||[]).forEach(cor=>{ if(!nomes.has(cor)) warn(`${p.id}: variante ${v.gb}GB/${v.condicao} usa cor inexistente "${cor}"`); });
+        if(!(v.preco_pix>0)) warn(`${p.id}: variante ${v.gb}GB sem preço`);
+        if(v.condicao==='seminovo' && (v.bateria==null||v.estado==null)) warn(`${p.id}: seminovo ${v.gb}GB sem bateria/estado`);
+      });
+    });
+    for(let n=1;n<=(PG.max_parcelas||0);n++){ if(PG.repassa_juros && n>(PG.parcelas_sem_juros||0) && !(PG.taxas&&PG.taxas[n]!=null)) warn(`taxa ausente para ${n}x`); }
+  }catch(e){ /* validação nunca derruba o app */ }
+}
+
 /* ================= rotas ================= */
 $('back').onclick=()=>{ buzz(); if(fromCat){ fromCat=false; history.back(); } else { location.hash='inicio'; } };
 function route(){
-  closeLB();
-  const h=location.hash.slice(1);
-  if(h.startsWith('p-')){ const p=LOJA.produtos.find(x=>x.id===h.slice(2)); if(p) return openProd(p); }
-  showCat();
+  try{
+    closeLB();
+    const h=location.hash.slice(1);
+    if(h.startsWith('p-')){ const p=LOJA.produtos.find(x=>x.id===h.slice(2)); if(p) return openProd(p); }
+    showCat();
+  }catch(err){ console.error('route', err); try{ showCat(); }catch(e){ telaErro(); } }
 }
 window.addEventListener('hashchange',route);
 
 /* ================= init ================= */
 (function init(){
-  const L=LOJA.loja;
-  document.documentElement.style.setProperty('--accent',L.cor_destaque);
-  $('logo').textContent=L.sigla; $('lojaNome').textContent=L.nome; $('lojaBairro').textContent=L.bairro;
-  $('lojaEnd').textContent=L.endereco; $('lojaHora').textContent=L.horario;
-  $('waCat').href=`https://wa.me/${L.whatsapp}?text=${encodeURIComponent(`Olá! Vi o catálogo da ${L.nome} e queria tirar uma dúvida.`)}`;
-  $('addrLink').href=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(L.endereco)}`;
-  renderChips(); renderGrid(); route();
+  try{
+    validarLoja();
+    const L=LOJA.loja;
+    document.documentElement.style.setProperty('--accent',safeHex(L.cor_destaque));
+    $('logo').textContent=L.sigla; $('lojaNome').textContent=L.nome; $('lojaBairro').textContent=L.bairro;
+    $('lojaEnd').textContent=L.endereco; $('lojaHora').textContent=L.horario;
+    $('waCat').href=`https://wa.me/${waNum()}?text=${encodeURIComponent(`Olá! Vi o catálogo da ${L.nome} e queria tirar uma dúvida.`)}`;
+    $('addrLink').href=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(L.endereco||'')}`;
+    renderChips(); renderGrid(); route();
+  }catch(err){ console.error('init', err); telaErro(); }
 })();
 </script>
 </body>
